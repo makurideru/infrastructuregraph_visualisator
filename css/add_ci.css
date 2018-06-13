@@ -1,0 +1,12 @@
+body {
+        padding-top: 70px;
+        /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+}
+.plsmin_btns {
+	margin-top:20px;
+}
+.form-group
+{
+ padding-bottom: 10px;
+ padding-right: 10px;
+}
