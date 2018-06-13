@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>IT-Infrastructure Visualisator</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="lib/css/bootstrap.min.css" rel="stylesheet">
+	
+	<!-- jQuery Version 3.11.1 -->
+    <script src="lib/js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="lib/js/bootstrap.min.js"></script>
+
+	<!-- Custom CSS -->
+    <link rel="stylesheet" href="css/connect_ci.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body onload="fillBoxes()">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Graph anzeigen</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="add_ci.html">CI hinzufügen</a>
+                    </li>
+                    <li>
+                        <a href="connect_ci.html">CI verknüpfen</a>
+                    </li>
+                    <li>
+                        <a href="delete_ci.html">CI löschen</a>
+                    </li>
+					<li>
+                        <a href="edit_ci.html">CI bearbeiten</a>
+                    </li>
+					
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container" id="mainbox"> 
+		<div class="well text-left">
+			<div class="form-inline">
+				<h4>CIs verknüpfen</h4>
+				<div class="panel panel-default">
+					<h5>Artefakte</h5>
+					<div class="form-group col-sm-offset-1 panel-body">
+						<span class="form-group">
+							<select class="form-control" id="art1">
+								<option>Bitte wählen</option>
+							</select>
+						</span>							
+						 <span class="form-group">
+						 <label class="control-label">----------</label>
+						  <select class="form-control" id="edge">
+							<option>Bitte wählen</option>
+							<option>requires</option>
+							<option>uses</option>
+						  </select>
+						  <label class="control-label">--------&gt;</label>
+						</span>
+						<span class="form-group">
+							<select class="form-control" id="art2">
+								<option>Bitte wählen</option>
+							</select>
+						</span>
+						<button class="btn btn-success" type="button" onclick="doSubmit()">
+							Insert&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-arrow-right"></span>
+						</button>	
+					</div>
+				</div>		
+				<div class="panel panel-default">
+					<h5>Server</h5>
+					<div class="form-group col-sm-offset-1 panel-body">
+						<span class="form-group">
+							<select class="form-control" id="ser1">
+								<option>Bitte wählen</option>
+							</select>
+						</span>							
+						 <span class="form-group">
+						 <label class="control-label">----------</label>
+						  <select class="form-control" id="edge2">
+							<option>Bitte wählen</option>
+							<option>communicates_with</option>
+						  </select>
+						  <label class="control-label">--------&gt;</label>
+						</span>
+						<span class="form-group">
+							<select class="form-control" id="ser2">
+								<option>Bitte wählen</option>
+							</select>
+						</span>
+						<button class="btn btn-success" type="button" onclick="doSubmit2()">
+							Insert&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-arrow-right"></span>
+						</button>	
+					</div>
+				</div>					
+			</div>
+		</div>
+    </div>
+    <!-- /.container -->
+	
+	<script type="text/javascript">
+	
+	function fillBoxes(){
+		fillArtefaktbox();
+		fillServerbox();
+	}
+	
+	///fill Artefakte	
+	function fillArtefaktbox()
+	{
+		$.ajax({
+			type: "POST",
+			url: "get_allArtefacts.php",
+		 success : function(text)
+		 {
+			 response = text;
+		 }
+		}).done(function( ) {	
+			var selectBox = document.getElementById('art1');
+			var selectBox2 = document.getElementById('art2');
+			
+			var erg = jQuery.parseJSON(response);
+			
+			for (var i = 0; i<erg.length; i++){
+				var opt = document.createElement('option');
+				opt.value = erg[i];
+				opt.innerHTML = erg[i];
+				selectBox.appendChild(opt);
+				
+				var opt2 = document.createElement('option');
+				opt2.value = erg[i];
+				opt2.innerHTML = erg[i];
+				selectBox2.appendChild(opt2);
+			}
+		});
+	}
+	
+	///fill Artefakte	
+	function fillServerbox()
+	{
+		$.ajax({
+			type: "POST",
+			url: "get_allServers.php",
+		 success : function(text)
+		 {
+			 response = text;
+		 }
+		}).done(function( ) {	
+			var selectBox = document.getElementById('ser1');
+			var selectBox2 = document.getElementById('ser2');
+			
+			var erg = jQuery.parseJSON(response);
+			
+			for (var i = 0; i<erg.length; i++){
+				var opt = document.createElement('option');
+				opt.value = erg[i];
+				opt.innerHTML = erg[i];
+				selectBox.appendChild(opt);
+				
+				var opt2 = document.createElement('option');
+				opt2.value = erg[i];
+				opt2.innerHTML = erg[i];
+				selectBox2.appendChild(opt2);
+			}
+		});
+	}
+	
+	function doSubmit() //Artefakte
+	{
+		var selectBoxWert1 = document.getElementById('art1').value;
+		var selectBoxWert2 = document.getElementById('art2').value;
+		var selectBoxWert3 = document.getElementById('edge').value;
+		
+		
+		
+		$.ajax({
+			type: "POST",
+			url: "save_newArtefaktEdge_in_db.php",
+			data: { art1: selectBoxWert1, art2: selectBoxWert2, edge: selectBoxWert3},
+         success : function(text)
+         {
+             response = text;
+         }
+		}).done(function( ) {
+		var infoBox = $(''+
+			' <div class="alert alert-info alert-dismissable">'+
+			'   <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+
+			'  '+response+' '+	
+			'</div>	'+	
+			'');
+			$('#mainbox').append(infoBox); // put it into the DOM 
+			
+			//setze selects zurück
+			//document.getElementById('art1').selectedIndex = 0;
+			//document.getElementById('art2').selectedIndex = 0;
+			//document.getElementById('edge').selectedIndex = 0;
+	
+		});	
+	}
+	
+	function doSubmit2() //Server
+	{
+		var selectBoxWert1 = document.getElementById('ser1').value;
+		var selectBoxWert2 = document.getElementById('ser2').value;
+		var selectBoxWert3 = document.getElementById('edge2').value;
+		
+		
+		
+		$.ajax({
+			type: "POST",
+			url: "save_newServerEdge_in_db.php",
+			data: { ser1: selectBoxWert1, ser2: selectBoxWert2, edge2: selectBoxWert3},
+         success : function(text)
+         {
+             response = text;
+         }
+		}).done(function( ) {
+		var infoBox = $(''+
+			' <div class="alert alert-info alert-dismissable">'+
+			'   <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+
+			'  '+response+' '+	
+			'</div>	'+	
+			'');
+			$('#mainbox').append(infoBox); // put it into the DOM 
+			
+			//setze selects zurück
+			//document.getElementById('ser1').selectedIndex = 0;
+			//document.getElementById('ser2').selectedIndex = 0;
+			//document.getElementById('edge2').selectedIndex = 0;
+	
+		});	
+	}
+	</script>
+
+</body>
+</html>

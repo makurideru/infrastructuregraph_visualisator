@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>IT-Infrastructure Visualisator</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="lib/css/bootstrap.min.css" rel="stylesheet">
+	
+	    <!-- jQuery Version 1.11.1 -->
+    <script src="lib/js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="lib/js/bootstrap.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/add_ci.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Graph anzeigen</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="add_ci.html">Technologie-Stack hinzufügen</a>
+                    </li>
+                    <li>
+                        <a href="connect_ci.html"><s>CI verknüpfen</s></a>
+                    </li>
+                    <li>
+                        <a href="delete_ci.html"><s>CI löschen</s></a>
+                    </li>
+					<li>
+                        <a href="edit_ci.html"><s>CI bearbeiten</s></a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container"> 
+		<div class="well text-left">
+				<form class="form-inline" action="save_addedCI_in_db.php" method="post">
+					<h4>Zugeordnete Anwendung</h4>
+					<div class="panel panel-default">
+						<div class="form-group col-sm-offset-1 panel-body">
+						<span class="form-group">
+							<label class="control-label" for="anw_name">Name:</label>
+							<input type="text" class="form-control" name="anw_name" placeholder="" required="required">
+						</span>
+						</div>
+					</div>
+					<h4>Instanzen</h4>
+					<div class="panel panel-default">
+						<div id="gesamtcontainer_instanzen">
+							<div id="instanzcontainer1">
+								<h5>Serverdaten (1)</h5>
+								<div class="form-group col-sm-offset-1 panel-body">	
+									<span class="form-group">
+										<label class="control-label" for="ser_hw">Hardware:</label>
+										<input type="text" class="form-control" name="ser_hw|1" placeholder=""><br/>
+									</span>	<br/>							
+									<span class="form-group">
+										<label class="control-label" for="ser_name">Servername:</label>
+										<input type="text" class="form-control" name="ser_name|1" placeholder="">
+									</span>
+									<span class="form-group">
+										<label class="control-label" for="ser_zone">Zone:</label>
+										<input type="text" class="form-control" name="ser_zone|1" placeholder="">
+									</span>
+									<span class="form-group">
+										<label class="control-label" for="ser_os">Betriebssystem:</label>
+										<input type="text" class="form-control" name="ser_os|1" placeholder="">
+									</span>
+								</div>	
+								<div class="form-group col-sm-offset-1 panel-body">
+									<div class="panel panel-default"> <!--Deployment-->
+										<div id="gesamtcontainer_deployment1">
+											<div id="deploymentcontainer_1_1">
+												<h5>Deploymentdaten (1)</h5>
+												<div class="form-group col-sm-offset-1 panel-body">
+													<span class="form-group">
+														<label class="control-label" for="dep_sys">Deployment Layer:</label>
+														<input type="text" class="form-control" name="dep_lay|1|1" placeholder="">
+													</span>
+													<span class="form-group">
+														<label class="control-label" for="dep_rte">RTE:</label>
+														<input type="text" class="form-control" name="dep_rte|1|1" placeholder="">
+													</span>
+													<span class="form-group">
+														<label class="control-label" for="dep_port">Port:</label>
+														<input type="text" class="form-control" name="dep_port|1|1" placeholder="">
+													</span>
+												</div><!--innere Artefakte -->
+													<div class="form-group col-sm-offset-1 panel-body">
+														<div class="panel panel-default"> <!--Artefakte-->
+															<div id="gesamtcontainer_InnerArtefakte1_1">
+																<div id="InnerArtefaktcontainer_1_1_1">
+																	<h5>Zugeordnetes Artefakt (1)</h5>
+																	<div class="form-group col-sm-offset-1 panel-body">
+																		<span class="form-group">
+																			<label class="control-label" for="art_Name">Artefaktname:</label>
+																			<input type="text" class="form-control" name="art_Name|1|1|1" placeholder="">
+																		</span>
+																		<span class="form-group">
+																			<label class="control-label" for="art_Lizenz">Lizenz:</label>
+																			<input type="text" class="form-control" name="art_Lizenz|1|1|1" placeholder="">
+																		</span>
+																		<span class="form-group">
+																			<label class="control-label" for="art_sonst">Sonstiges:</label>
+																			<input type="text" class="form-control" name="art_sonst|1|1|1" placeholder="">
+																		</span>
+																	</div>
+																	<hr/>
+																</div>
+																<input type="hidden" id="NumberOfInnerArtefakte_1_1" name="NumberOfInnerArtefakte|1|1" value="1">
+															</div>
+															<span class="input-group-btn"> <!--innere Buttons-->
+																<button type="button" class="btn btn-danger btn-number_inner" onclick="inner2_button_clicked(this);" data-type="plus_inner2" value="1|1|1"> <!--outer|inner|2inner-->
+																	<span class="glyphicon glyphicon-plus"></span>
+																</button>
+																<button type="button" class="btn btn-danger btn-number_inner" onclick="inner2_button_clicked(this);" data-type="minus_inner2" value="1|1|1">
+																	<span class="glyphicon glyphicon-minus"></span>
+																</button>
+															</span>	
+														</div>
+													</div>
+												<hr/>
+											</div>
+											<input type="hidden" id="NumberOfDeployments_1" name="NumberOfDeployments|1" value="1">
+										</div>
+										<span class="input-group-btn"> <!--mittlere Buttons-->
+											<button type="button" class="btn btn-info btn-number_middle" onclick="middle_button_clicked(this);" data-type="plus_inner" value="1|1"> <!--outer|inner-->
+												<span class="glyphicon glyphicon-plus"></span>
+											</button>
+											<button type="button" class="btn btn-info btn-number_middle" onclick="middle_button_clicked(this);" data-type="minus_inner" value="1|1">
+												<span class="glyphicon glyphicon-minus"></span>
+											</button>
+										</span>	
+									</div>
+								</div>
+								<hr/>
+							</div>			
+						</div>	
+						<span class="input-group-btn"> <!--äußere Buttons-->
+							<button type="button" class="btn btn-warning  btn-number_outer" data-type="plus_outer">
+								<span class="glyphicon glyphicon-plus"></span>
+							</button>
+							<button type="button" class="btn btn-warning  btn-number_outer"  data-type="minus_outer">
+								<span class="glyphicon glyphicon-minus"></span>
+							</button>
+						</span>
+						<input type="hidden" id="NumberOfInstances" name="NumberOfInstances" value="1">
+					</div>
+					<div class="form-group col-md-4 text-center">						
+						  <button type="submit" class="btn btn-default">Submit</button>							
+					</div>	
+				</form>
+		</div>
+    </div>
+    <!-- /.container -->
+	
+	<script type="text/javascript">
+	var $currentNode_outer = 1;
+	
+	//plugin bootstrap minus and plus (outer)
+	$('.btn-number_outer').click(function(e){
+		if(this.getAttribute("data-type") == "plus_outer")
+		{
+			$currentNode_outer++;
+			var neueInstanz = $(''+
+			'	<div id="instanzcontainer'+$currentNode_outer+'">'+
+			'	<h5>Serverdaten ('+$currentNode_outer+')</h5>'+
+			'	<div class="form-group col-sm-offset-1 panel-body">		'+	
+			'		<span class="form-group">'+
+			'			<label class="control-label" for="ser_hw">Hardware:</label>'+
+			'			<input type="text" class="form-control" name="ser_hw|'+$currentNode_outer+'" placeholder=""><br/>'+
+			'		</span><br/>'+			
+			'		<span class="form-group">'+
+			'			<label class="control-label" for="ser_name">Servername:</label>'+
+			'			<input type="text" class="form-control" name="ser_name|'+$currentNode_outer+'" placeholder="">'+
+			'		</span>'+
+			'		<span class="form-group">'+
+			'			<label class="control-label" for="ser_zone">Zone:</label>'+
+			'			<input type="text" class="form-control" name="ser_zone|'+$currentNode_outer+'" placeholder="">'+
+			'		</span>'+
+			'		<span class="form-group">'+
+			'			<label class="control-label" for="ser_os">Betriebssystem:</label>'+
+			'			<input type="text" class="form-control" name="ser_os|'+$currentNode_outer+'" placeholder="">'+
+			'		</span>'+
+			'	</div>	'+
+			'	<div class="form-group col-sm-offset-1 panel-body">'+
+			'		<div class="panel panel-default"> <!--Deployment-->'+
+			'			<div id="gesamtcontainer_deployment'+$currentNode_outer+'">'+
+			'				<div id="deploymentcontainer_'+$currentNode_outer+'_1">'+
+			'					<h5>Deploymentdaten (1)</h5>'+
+			'					<div class="form-group col-sm-offset-1 panel-body">'+
+			'						<span class="form-group">'+
+			'							<label class="control-label" for="dep_sys">Deployment Layer:</label>'+
+			'							<input type="text" class="form-control" name="dep_lay|'+$currentNode_outer+'|1" placeholder="">'+
+			'						</span>'+
+			'						<span class="form-group">'+
+			'							<label class="control-label" for="dep_rte">RTE:</label>'+
+			'							<input type="text" class="form-control" name="dep_rte|'+$currentNode_outer+'|1" placeholder="">'+
+			'						</span>'+
+			'						<span class="form-group">'+
+			'							<label class="control-label" for="dep_port">Port:</label>'+
+			'							<input type="text" class="form-control" name="dep_port|'+$currentNode_outer+'|1" placeholder="">'+
+			'						</span>'+
+			'					</div><!--Artefakte -->'+
+			'						<div class="form-group col-sm-offset-1 panel-body">'+
+			'							<div class="panel panel-default"> <!--Artefakte-->'+
+			'								<div id="gesamtcontainer_InnerArtefakte'+$currentNode_outer+'_1">'+
+			'									<div id="InnerArtefaktcontainer_'+$currentNode_outer+'_1_1">'+
+			'										<h5>Zugeordnetes Artefakt (1)</h5>'+
+			'										<div class="form-group col-sm-offset-1 panel-body">'+
+			'											<span class="form-group">'+
+			'												<label class="control-label" for="art_Name">Artefaktname:</label>'+
+			'												<input type="text" class="form-control" name="art_Name|'+$currentNode_outer+'|1|1" placeholder="">'+
+			'											</span>'+
+			'											<span class="form-group">'+
+			'												<label class="control-label" for="art_Lizenz">Lizenz:</label>'+
+			'												<input type="text" class="form-control" name="art_Lizenz|'+$currentNode_outer+'|1|1" placeholder="">'+
+			'											</span>'+
+			'											<span class="form-group">'+
+			'												<label class="control-label" for="art_sonst">Sonstiges:</label>'+
+			'												<input type="text" class="form-control" name="art_sonst|'+$currentNode_outer+'|1|1" placeholder="">'+
+			'											</span>'+
+			'										</div>'+
+			'										<hr/>'+
+			'									</div>'+
+			'									<input type="hidden" id="NumberOfInnerArtefakte_'+$currentNode_outer+'_1" name="NumberOfInnerArtefakte|'+$currentNode_outer+'|1" value="1">'+
+			'								</div>'+
+			'								<span class="input-group-btn"> <!--innere Buttons-->'+
+			'									<button type="button" class="btn btn-danger btn-number_inner" onclick="inner2_button_clicked(this);" data-type="plus_inner2" value="'+$currentNode_outer+'|1|1"> <!--outer|inner|2inner-->'+
+			'										<span class="glyphicon glyphicon-plus"></span>'+
+			'									</button>'+
+			'									<button type="button" class="btn btn-danger btn-number_inner" onclick="inner2_button_clicked(this);" data-type="minus_inner2" value="'+$currentNode_outer+'|1|1">'+
+			'										<span class="glyphicon glyphicon-minus"></span>'+
+			'									</button>'+
+			'								</span>	'+
+			'							</div>'+
+			'						</div>'+
+			'					<hr/>'+
+			'				</div>'+
+			'				<input type="hidden" id="NumberOfDeployments_'+$currentNode_outer+'" name="NumberOfDeployments|'+$currentNode_outer+'" value="1">'+
+			'			</div>'+
+			'			<span class="input-group-btn"> <!--mittlere Buttons-->'+
+			'				<button type="button" class="btn btn-info btn-number_middle" onclick="middle_button_clicked(this);" data-type="plus_inner" value="'+$currentNode_outer+'|1"> <!--outer|inner-->'+
+			'					<span class="glyphicon glyphicon-plus"></span>'+
+			'				</button>'+
+			'				<button type="button" class="btn btn-info btn-number_middle" onclick="middle_button_clicked(this);" data-type="minus_inner" value="'+$currentNode_outer+'|1">'+
+			'					<span class="glyphicon glyphicon-minus"></span>'+
+			'				</button>'+
+			'			</span>	'+
+			'		</div>'+
+			'	</div>'+
+			'	<hr/>'+
+			'</div>	'+
+			'');
+			$('#gesamtcontainer_instanzen').append(neueInstanz); // put it into the DOM 
+			
+			$("#NumberOfInstances").val($currentNode_outer); //Anzahl Instanzen zählen (+)
+		}
+		else{
+			if(this.getAttribute("data-type") == "minus_outer")
+			{
+				if($currentNode_outer > 1)
+				{				
+					$('#instanzcontainer'+$currentNode_outer+'').remove();	
+					$currentNode_outer--;
+
+					$("#NumberOfInstances").val($currentNode_outer); //Anzahl Instanzen zählen (-)
+				}			
+			}
+		}
+	});
+	
+
+	//plugin bootstrap minus and plus (inner)
+	function middle_button_clicked(elem)
+	{
+		$contextNode_outer = elem.getAttribute("value").split("|")[0]; //Wert auf dem plus/minus; zu Beginn der Wert von $currentNode_outer (outer)
+		$currentNode_inner = elem.getAttribute("value").split("|")[1]; //Wert auf dem plus/minus; zu Beginn 1 (inner)
+
+		if(elem.getAttribute("data-type") == "plus_inner")
+		{
+			$currentNode_inner++;
+			var neuesArtefakt = $(''+
+			'	<div id="deploymentcontainer_'+$contextNode_outer+'_'+$currentNode_inner+'">'+
+			'		<h5>Deploymentdaten ('+$currentNode_inner+')</h5>'+
+			'		<div class="form-group col-sm-offset-1 panel-body">'+
+			'			<span class="form-group">'+
+			'				<label class="control-label" for="dep_sys">Deployment Layer:</label>'+
+			'				<input type="text" class="form-control" name="dep_lay|'+$contextNode_outer+'|'+$currentNode_inner+'" placeholder="">'+
+			'			</span>'+
+			'			<span class="form-group">'+
+			'				<label class="control-label" for="dep_rte">RTE:</label>'+
+			'				<input type="text" class="form-control" name="dep_rte|'+$contextNode_outer+'|'+$currentNode_inner+'" placeholder="">'+
+			'			</span>'+
+			'			<span class="form-group">'+
+			'				<label class="control-label" for="dep_port">Port:</label>'+
+			'				<input type="text" class="form-control" name="dep_port|'+$contextNode_outer+'|'+$currentNode_inner+'" placeholder="">'+
+			'			</span>'+
+			'		</div><!--Artefakte -->'+
+			'			<div class="form-group col-sm-offset-1 panel-body">'+
+			'				<div class="panel panel-default"> <!--Artefakte-->'+
+			'					<div id="gesamtcontainer_InnerArtefakte'+$contextNode_outer+'_'+$currentNode_inner+'">'+
+			'						<div id="InnerArtefaktcontainer_'+$contextNode_outer+'_'+$currentNode_inner+'_1">'+
+			'							<h5>Zugeordnetes Artefakt (1)</h5>'+
+			'							<div class="form-group col-sm-offset-1 panel-body">'+
+			'								<span class="form-group">'+
+			'									<label class="control-label" for="art_Name">Artefaktname:</label>'+
+			'									<input type="text" class="form-control" name="art_Name|'+$contextNode_outer+'|'+$currentNode_inner+'|1" placeholder="">'+
+			'								</span>'+
+			'								<span class="form-group">'+
+			'									<label class="control-label" for="art_Lizenz">Lizenz:</label>'+
+			'									<input type="text" class="form-control" name="art_Lizenz|'+$contextNode_outer+'|'+$currentNode_inner+'|1" placeholder="">'+
+			'								</span>'+
+			'								<span class="form-group">'+
+			'									<label class="control-label" for="art_sonst">Sonstiges:</label>'+
+			'									<input type="text" class="form-control" name="art_sonst|'+$contextNode_outer+'|'+$currentNode_inner+'|1" placeholder="">'+
+			'								</span>'+
+			'							</div>'+
+			'							<hr/>'+
+			'						</div>'+
+			'						<input type="hidden" id="NumberOfInnerArtefakte_'+$contextNode_outer+'_'+$currentNode_inner+'" name="NumberOfInnerArtefakte|'+$contextNode_outer+'|'+$currentNode_inner+'" value="1">'+
+			'					</div>'+
+			'					<span class="input-group-btn"> <!--innere Buttons-->'+
+			'						<button type="button" class="btn btn-danger btn-number_inner" onclick="inner2_button_clicked(this);" data-type="plus_inner2" value="'+$contextNode_outer+'|'+$currentNode_inner+'|1"> <!--outer|inner|2inner-->'+
+			'							<span class="glyphicon glyphicon-plus"></span>'+
+			'						</button>'+
+			'						<button type="button" class="btn btn-danger btn-number_inner" onclick="inner2_button_clicked(this);" data-type="minus_inner2" value="'+$contextNode_outer+'|'+$currentNode_inner+'|1">'+
+			'							<span class="glyphicon glyphicon-minus"></span>'+
+			'						</button>'+
+			'					</span>	'+
+			'				</div>'+
+			'			</div>'+
+			'		<hr/>'+
+			'	</div>	'+
+			'');
+			$('#gesamtcontainer_deployment'+$contextNode_outer+'').append(neuesArtefakt); // put it into the DOM 
+
+			$(elem).val($contextNode_outer+"|"+$currentNode_inner);
+			$(elem).next(".btn-number_middle").val($contextNode_outer+"|"+$currentNode_inner); //value auf dem "-" Button setzen
+			
+			$('#NumberOfDeployments_'+$contextNode_outer+'').val($currentNode_inner); //Anzahl Instanzen zählen (+)
+		}
+		else{
+			if(elem.getAttribute("data-type") == "minus_inner")
+			{
+				if($currentNode_inner > 1)
+				{				
+					$('#deploymentcontainer_'+$contextNode_outer+'_'+$currentNode_inner+'').remove();	
+					$currentNode_inner--;
+					
+					$(elem).val($contextNode_outer+"|"+$currentNode_inner);
+					$(elem).prev(".btn-number_middle").val($contextNode_outer+"|"+$currentNode_inner); //value auf dem "+" Button setzen
+					
+					$('#NumberOfDeployments_'+$contextNode_outer+'').val($currentNode_inner); //Anzahl Instanzen zählen (-)
+				}			
+			}
+		}	
+	};
+	
+	
+	//plugin bootstrap minus and plus (inner_inner)
+	function inner2_button_clicked(elem)
+	{
+		$contextNode_outer = elem.getAttribute("value").split("|")[0]; //Wert auf dem plus/minus; zu Beginn der Wert von $currentNode_outer (outer)
+		$contextNode_inner = elem.getAttribute("value").split("|")[1]; //Wert auf dem plus/minus; zu Beginn der Wert von $currentNode_inner (inner)
+		$currentNode_inner2 = elem.getAttribute("value").split("|")[2]; //Wert auf dem plus/minus; zu Beginn 1 (inner_inner)
+		
+		if(elem.getAttribute("data-type") == "plus_inner2")
+		{
+			$currentNode_inner2++;
+			var neuesInnerArtefakt = $(''+
+			'		<div id="InnerArtefaktcontainer_'+$contextNode_outer+'_'+$contextNode_inner+'_'+$currentNode_inner2+'">'+
+			'			<h5>Zugeordnetes Artefakt ('+$currentNode_inner2+')</h5>'+
+			'			<div class="form-group col-sm-offset-1 panel-body">'+
+			'					<span class="form-group">'+
+			'						<label class="control-label" for="art_Name">Artefaktname:</label>'+
+			'						<input type="text" class="form-control" name="art_Name|'+$contextNode_outer+'|'+$contextNode_inner+'|'+$currentNode_inner2+'" placeholder="">'+
+			'					</span>'+
+			'					<span class="form-group">'+
+			'						<label class="control-label" for="art_Lizenz">Lizenz:</label>'+
+			'						<input type="text" class="form-control" name="art_Lizenz|'+$contextNode_outer+'|'+$contextNode_inner+'|'+$currentNode_inner2+'" placeholder="">'+
+			'					</span>'+
+			'					<span class="form-group">'+
+			'						<label class="control-label" for="art_sonst">Sonstiges:</label>'+
+			'						<input type="text" class="form-control" name="art_sonst|'+$contextNode_outer+'|'+$contextNode_inner+'|'+$currentNode_inner2+'" placeholder="">'+
+			'					</span>'+
+			'				</div>'+
+			'			<hr/>'+
+			'		</div>'+
+			'');
+			$('#gesamtcontainer_InnerArtefakte'+$contextNode_outer+'_'+$contextNode_inner).append(neuesInnerArtefakt); // put it into the DOM 
+
+			$(elem).val($contextNode_outer+"|"+$contextNode_inner+"|"+$currentNode_inner2); //value auf dem "+" Button (also auf sich selbst) setzen
+			$(elem).next(".btn-number_inner").val($contextNode_outer+"|"+$contextNode_inner+"|"+$currentNode_inner2); //value auf dem "-" Button setzen
+			
+			$('#NumberOfInnerArtefakte_'+$contextNode_outer+'_'+$contextNode_inner).val($currentNode_inner2); //Anzahl Instanzen zählen (+)
+		}
+		else{
+			if(elem.getAttribute("data-type") == "minus_inner2")
+			{
+				if($currentNode_inner2 > 1)
+				{				
+					$('#InnerArtefaktcontainer_'+$contextNode_outer+'_'+$contextNode_inner+'_'+$currentNode_inner2).remove();	
+					$currentNode_inner2--;
+					
+					$(elem).val($contextNode_outer+"|"+$contextNode_inner+"|"+$currentNode_inner2);
+					$(elem).prev(".btn-number_inner").val($contextNode_outer+"|"+$contextNode_inner+"|"+$currentNode_inner2); //value auf dem "+" Button setzen
+					
+					$('#NumberOfInnerArtefakte_'+$contextNode_outer+'_'+$contextNode_inner).val($currentNode_inner2); //Anzahl Instanzen zählen (-)
+				}			
+			}
+		}
+		
+		console.log($contextNode_outer+'_'+$contextNode_inner+'_'+$currentNode_inner2)
+		
+	};
+    </script>
+
+</body>
+</html>

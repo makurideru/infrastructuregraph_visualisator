@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Language" content="en-us">
+    <title>PHP MySQL Typeahead Autocomplete</title>
+    <meta charset="utf-8">
+	
+	<!-- Bootstrap Core CSS -->
+    <link href="lib/css/bootstrap.min.css" rel="stylesheet">
+	<link href="lib/css/navbar-fixed-side.css" rel="stylesheet" />
+	
+	<!-- jQuery Version 3.11.1 -->
+    <script src="lib/js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="lib/js/bootstrap.min.js"></script>
+	
+	
+    <script src="lib/js/typeahead.js"></script>
+	
+    <style>
+        h1 {
+            font-size: 20px;
+            color: #111;
+        }
+
+        .content {
+            width: 80%;
+            margin: 0 auto;
+            margin-top: 50px;
+        }
+
+        .tt-hint
+		{
+		    border: 2px solid #CCCCCC;
+            border-radius: 8px 8px 8px 8px;
+            height: 35px;
+            outline: medium none;
+            padding: 8px 12px;
+            width: 400px;
+			color: grey;
+		}
+        .form-control {
+            border: 2px solid #CCCCCC;
+            border-radius: 8px 8px 8px 8px;
+            height: 35px;
+            outline: medium none;
+            padding: 8px 12px;
+            width: 195px;
+			color: black;
+        }
+
+        .tt-dropdown-menu {
+            width: 195px;
+            margin-top: 5px;
+            padding: 8px 12px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 8px 8px 8px 8px;
+            font-size: 18px;
+            color: #111;
+            background-color: #F1F1F1;
+        }
+		
+		.twitter-typeahead{ float:left; width:100%}
+    </style>
+    <script>
+        $(document).ready(function() {
+            $('.anwendungsfeld').typeahead({
+			  remote: {
+				url: 'autosuggest.php?query=%QUERY&type=%TYPE&prop=%PROP',
+				replace: function(url, query) {
+				  url = url.replace('%QUERY', query).replace('%TYPE', "Anwendung");
+				  return url.replace('%QUERY', url).replace('%PROP', "name");
+				}
+			  }
+            });
+			$('.artefaktfeld').typeahead({
+			  remote: {
+				url: 'autosuggest.php?query=%QUERY&type=%TYPE&prop=%PROP',
+				replace: function(url, query) {
+				  url = url.replace('%QUERY', query).replace('%TYPE', "Artefakt");
+				  return url.replace('%QUERY', url).replace('%PROP', "name");
+				}
+			  }
+            });
+			$('.deploymentfeld').typeahead({
+			  remote: {
+				url: 'autosuggest.php?query=%QUERY&type=%TYPE&prop=%PROP',
+				replace: function(url, query) {
+				  url = url.replace('%QUERY', query).replace('%TYPE', "Deployment");
+				  return url.replace('%QUERY', url).replace('%PROP', "DeploymentLayer");
+				}
+			  }
+            });
+			$('.serverfeld').typeahead({
+			  remote: {
+				url: 'autosuggest.php?query=%QUERY&type=%TYPE&prop=%PROP',
+				replace: function(url, query) {
+				  url = url.replace('%QUERY', query).replace('%TYPE', "Server");
+				  return url.replace('%QUERY', url).replace('%PROP', "name");
+				}
+			  }
+            });
+			$('.hwfeld').typeahead({
+			  remote: {
+				url: 'autosuggest.php?query=%QUERY&type=%TYPE&prop=%PROP',
+				replace: function(url, query) {
+				  url = url.replace('%QUERY', query).replace('%TYPE', "Hardware");
+				  return url.replace('%QUERY', url).replace('%PROP', "name");
+				}
+			  }
+            });
+			$('.zonefeld').typeahead({
+			  remote: {
+				url: 'autosuggest.php?query=%QUERY&type=%TYPE&prop=%PROP',
+				replace: function(url, query) {
+				  url = url.replace('%QUERY', query).replace('%TYPE', "Server");
+				  return url.replace('%QUERY', url).replace('%PROP', "Zone");
+				}
+			  }
+            });
+        })
+
+		
+    </script>
+</head>
+
+<body>
+<div class="panel panel-default">
+						<div class="form-group col-sm-offset-1 panel-body">
+						<span class="form-group">
+							<label class="control-label" for="anw_name">Name:</label>
+							<input type="text" class="form-control anwendungsfeld" name="anw_name" placeholder="Enter Anwendungsname" required="required">
+						</span>
+						</div>
+					</div>
+
+    <div class="content">
+
+        <form>
+            <h1>Anwendung</h1>
+            <input type="text" name="anw_name" size="30" class="form-control anwendungsfeld" placeholder="Enter Anw">
+			<h1>Artefakt</h1>
+            <input type="text" name="anw_name" size="30" class="form-control artefaktfeld" placeholder="Enter Anw">
+			<h1>Deployment</h1>
+            <input type="text"  size="30" class="form-control deploymentfeld" placeholder="Enter Anw">
+			<h1>Server</h1>
+            <input type="text"  size="30" class="form-control serverfeld" placeholder="Enter Server">
+			<h1>HW</h1>
+            <input type="text"  size="30" class="form-control hwfeld" placeholder="Enter Anw">
+			<h1>Zone</h1>
+			<input type="text" class="form-control zonefeld" name="ser_zone|1" placeholder="Enter Zone">
+        </form>
+    </div>
+</body>
+
+</html>

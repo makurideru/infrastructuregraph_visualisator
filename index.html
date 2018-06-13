@@ -1,0 +1,2695 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<!-- Autor Mark Riedel makurideru@gmail.com -->
+				
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<title>IT-Infrastructure Visualisator</title>
+		
+		<!-- Bootstrap Core CSS -->
+		<link href="lib/css/bootstrap.min.css" rel="stylesheet">
+		<link href="lib/css/navbar-fixed-side.css" rel="stylesheet" />
+		
+		<!-- jQuery Version 3.11.1 -->
+		<script src="lib/js/jquery.js"></script>
+		
+		<!-- Bootstrap Core JavaScript -->
+		<script src="lib/js/bootstrap.min.js"></script>
+		
+		<!-- jQuery für das Popupmodal zur Kantenwahl -->
+		<script src="lib/js/jquery-ui.js"></script>
+		<link rel="stylesheet" href="lib/css/jquery-ui.css">
+		<!-- <link rel="stylesheet" href="lib/css/jquery-ui.theme.css"> -->
+		<!-- <link rel="stylesheet" href="lib/css/jquery-ui.structure.css"> -->
+		
+		<!-- D3 JS for the force-directed-graph -->
+		<script type="text/javascript" src="lib/js/d3.v3.min.js"></script>
+		
+		<!-- slider -->
+		<link rel="stylesheet" href="lib/css/slider.css">
+		<script type="text/javascript" src="lib/js/bootstrap_slider_953.js"></script>
+		
+		<!-- checkboxes -->
+		<link rel="stylesheet" href="lib/css/custom_checkbox.css">
+		
+		<!-- Custom CSS -->
+		<link rel="stylesheet" href="css/index.css">
+		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+	<body onload="fillAnwendungsbox()">
+		<!-- Navigation -->
+		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="index.html">Graph anzeigen</a>
+				</div>
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li>
+							<a href="add_ci.html">Technologie-Stack hinzufügen</a>
+						</li>
+						<li>
+							<a href="connect_ci.html"><s>CI verknüpfen</s></a>
+						</li>
+						<li>
+							<a href="delete_ci.html"><s>CI löschen</s></a>
+						</li>
+						<li>
+							<a href="edit_ci.html"><s>CI bearbeiten</s></a>
+						</li>
+					</ul>
+				</div>
+				<!-- /.navbar-collapse -->
+			</div>
+			<!-- /.container -->
+		</nav>
+		<!-- Page Content -->
+		<div class="container-fluid">
+			<div class="col-sm-3 col-lg-2">
+				<nav class="navbar navbar-default navbar-fixed-side">
+					<!-- normal collapsible navbar markup -->
+					<label>Sicht wählen:</label>
+					<ul class="list-group">
+						<li class="list-group-item"><a href="index.html"><s>Gesamtansicht</s></a></li>
+						<li class="list-group-item"><a href="#" onclick="Anwendungssicht()">Anwendungssicht</a></li>
+					</ul>
+					<br/>
+					<div class="form-group">
+						<label for="sel1">Anwendung wählen:</label>
+						<select class="form-control" id="sel1" onchange="doFiltering(1)">
+						</select>
+					</div>
+					<ul class="list-group">
+						<li class="list-group-item"><a href="#" onclick="Artefaktsicht()">Artefaktsicht</a></li>
+						<li class="list-group-item"><a href="#" onclick="Instanzsicht()">Instanzsicht</a></li>
+						<li class="list-group-item"><a href="#" onclick="Hardwaresicht()">Hardwaresicht</a></li>
+					</ul>
+					<br/>
+					<label>Zur internen Sicht der Datenbank wechseln:</label>
+					<ul class="list-group">
+						<li class="list-group-item"><a href="http://localhost:7474/browser/">Neo4J-Sicht</a></li>
+					</ul>
+				</nav>
+			</div>
+			<div class="col-sm-9 col-lg-10">
+				<!-- page content -->
+				<div class="col-lg-12 text-center">
+					<table border="0" id="table1">
+						<tr>
+							<td><label>CI suchen:</label></td>
+							<td>
+								<div id="custom-search-input">
+									<div class="input-group col-md-12">
+										<input type="text" class="search-query form-control" placeholder="Search" />
+										<span class="input-group-btn">
+										<button class="btn btn-danger" type="button" id="CIsearchBtn" onclick="SearchCI_or_EventChain(this)">
+										<span class=" glyphicon glyphicon-search"></span>
+										</button>
+										</span>
+									</div>
+								</div>
+							</td>
+							<td>&nbsp;&nbsp;&nbsp;</td>
+							<td><label>Wirkkette anzeigen:</label></td>
+							<td>
+								<div id="custom-search-input">
+									<div class="input-group col-md-12">
+										<input type="text" class="search-query form-control" placeholder="Emphasize" />
+										<span class="input-group-btn">
+										<button class="btn btn-danger" type="button" id="eventChainBtn" onclick="SearchCI_or_EventChain(this)">
+										<span class=" glyphicon glyphicon-search"></span>
+										</button>
+										</span>
+									</div>
+								</div>
+							</td>
+							<td>
+								<span class="form-group" id="wirkkettenconf">
+								<label class="radiocontainer" title="Anwendung -...> HW">&darr;
+								<input type="radio" checked="checked" name="radio" id="Urs_checkbox">
+								<span class="radiomark"></span>
+								</label>
+								<label class="radiocontainer" title="HW -...> Anwendung">&uarr;
+								<input type="radio" name="radio" id="Aus_checkbox">
+								<span class="radiomark"></span>
+								</label>
+								</span>
+							</td>
+						</tr>
+					</table>
+					<table class="table-condensed" id="table2">
+						<tr>
+							<td><label>Show:</label></td>
+							<td>&nbsp;</td>
+							<td> <span class="custom-checkbox"><input type="checkbox" id="Anw_checkbox" onclick="doFiltering();" checked><label for="Anw_checkbox">Anwendungen</label></span></td>
+							<td><span class="custom-checkbox"><input type="checkbox" id="Art_checkbox" onclick="doFiltering();" ><label for="Art_checkbox">Artefakte</label></span></td>
+							<td> <span class="custom-checkbox"><input type="checkbox" id="Dep_checkbox" onclick="doFiltering();"><label for="Dep_checkbox">Deployment-Layer</label></span></td>
+							<td><span class="custom-checkbox"><input type="checkbox" id="Ser_checkbox" onclick="doFiltering();"><label for="Ser_checkbox">Server</label></span></td>
+							<td><span class="custom-checkbox"><input type="checkbox" id="HW_checkbox" onclick="doFiltering();"><label for="HW_checkbox">Hardware</label></span>	</td>
+							<td><span class="custom-checkbox"><input type="checkbox" id="Special_checkbox" onclick="doFiltering();"><label for="Special_checkbox">Sonder-CIs</label></span>	</td>
+							<td>
+								<select class="form-control" id="sel_filter" onchange="doFiltering(2)">
+								</select>
+							</td>
+						</tr>
+					</table>
+					<table>
+						<tr>
+							<td><span class="custom-checkbox"><input type="checkbox" id="Drag_checkbox" onclick="start_stop_drag();" checked><label for="Drag_checkbox">Drag</label></span>	</td>
+							<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+							<td>Charge:<input id="ForceSlider" class="slider" data-slider-id='Force1Slider' type="text" data-slider-min="-900" data-slider-max="0" data-slider-step="10" data-slider-value="-400"/></td>
+							<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+							<td>Link Dist.:<input id="linkDistanceSlider" class="slider" data-slider-id='Edge1Slider' type="text" data-slider-min="0" data-slider-max="200" data-slider-step="10" data-slider-value="30"/></td>
+							<!--162.5 default-->
+							<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+							<td>Size:<input id="sizeSlider" class="slider" data-slider-id='Size1Slider' type="text" data-slider-min="700" data-slider-max="2000" data-slider-step="10" data-slider-value="1250"/></td>
+						</tr>
+					</table>
+					<br/>
+					<div id='container_for_graph'>
+						<div id='graph'></div>
+						<div id='notes'></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- rightclickmenu -->
+		<menu id="ctxMenu">
+			<menu title="Anwendung" onclick="AddNode('Anwendung');"></menu>
+			<menu title="Artefakt" onclick="AddNode('Artefakt');"></menu>
+			<menu title="Deployment-Layer" onclick="AddNode('DeploymentLayer');"></menu>
+			<menu title="Server" onclick="AddNode('Server');"></menu>
+			<menu title="Hardware" onclick="AddNode('Hardware');"></menu>
+			<menu title="Loadbalancer" onclick="AddNode('Loadbalancer');"></menu>
+			<menu title="Firewall" onclick="AddNode('Firewall');"></menu>
+			<menu title="Proxy" onclick="AddNode('Proxy');"></menu>
+		</menu>
+		
+		<!-- modal für Kantenbeschriftung -->
+		<div id="edge_selector" title="Kantenbeschriftung">
+			<select name="chosen_edge" id="chosen_edge">
+				<option value="0">Bitte wählen!</option>
+				<option value="1">has_child</option>
+				<option value="2">deployed_On</option>
+				<option value="3">installed_On</option>
+				<option value="4">instanced_On</option>
+				<option value="5">requires</option>
+				<option value="6">uses</option>
+				<option value="7">communicates_with</option>
+			</select>
+		</div>
+		<!-- /.container -->
+		<script type="text/javascript">
+$( "#edge_selector" ).dialog({ autoOpen: false });  //der Kantenwahldialog wird zu beginn ausgeblendet
+
+//rightclickmenu Eventhandling
+var notepad = document.getElementById("container_for_graph");
+notepad.addEventListener("contextmenu",function(event){
+	event.preventDefault();
+	var ctxMenu = document.getElementById("ctxMenu");
+	ctxMenu.style.display = "block";
+	ctxMenu.style.left = (event.pageX - 10)+"px";
+	ctxMenu.style.top = (event.pageY - 10)+"px";
+},false);
+notepad.addEventListener("click",function(event){
+	var ctxMenu = document.getElementById("ctxMenu");
+	ctxMenu.style.display = "";
+	ctxMenu.style.left = "";
+	ctxMenu.style.top = "";
+},false);
+
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function AddNode(ci_typ)
+{
+	var ci_name = prompt("Name des CIs", "unknown CI");
+
+	if(ci_name != null)
+	{
+		//var add_node_allowd = false;
+		ci_name = ci_name.trim(); //leerzeichen am Anfang und Ende entfernen
+
+		$.ajax({
+		type: "POST",
+		url: "check_if_nodename_exists.php",
+		data: { ci_name: ci_name},
+		success : function(text)
+		{
+			response = text;
+		}
+		}).done(function( ) {
+			if(response == "exists")
+			{
+				//alert("Info: Knoten mit diesem Namen existiert bereits - Knoten wird nur zusätzlich angezeigt, wurde aber nicht neu angelegt");
+				//add_node_allowd = false;
+				var my_tempParent = $('#container_for_graph');
+				my_tempParent.append( "<div id='waiting'><b>Info: Knoten mit diesem Namen existiert bereits - Knoten wird nur zusätzlich angezeigt, wurde aber nicht neu angelegt</b></div>" );
+				$( "#waiting" ).fadeOut(5000, function() { $(this).remove(); });
+			}
+			else{
+				var newNode;
+
+				switch(ci_typ){
+					case "Loadbalancer":
+						addnewNodeToDB(ci_name, "Special", "Loadbalancer"); //write it to neo4j
+						break;
+					case "Firewall":
+						addnewNodeToDB(ci_name, "Special", "Firewall");
+						break;
+					case "Proxy":
+						addnewNodeToDB(ci_name, "Special", "Proxy");
+						break;
+					default:
+						addnewNodeToDB(ci_name, ci_typ, null);
+				}
+
+				//add_node_allowd = true;
+			}
+
+		});
+
+		await sleep(400); //wait till its written
+
+		//if(add_node_allowd == true)
+		//{
+				$.ajax({ //so you can delete the last node you just created withoud reloadig //thats why sleep and async
+				type: "POST",
+				url: "getLastID.php",
+				data: {},
+				success : function(text)
+				{
+					 response = text;
+				}
+				}).done(function( ) {
+					//alert(response);
+					var id_helper = jQuery.parseJSON(response);
+
+					switch(ci_typ) {
+						case "Hardware":
+							newNode = {id:id_helper,label:"Hardware",title:ci_name}; //id, Label=type (Hardware), name (X86 Strang xy)
+							break;
+						case "Server":
+							newNode = {id:id_helper,label:"Server",title:ci_name, os:"unnamed OS", zone:"unnamed Zone"}; //id, Label (Server), name (upxy), OS, Zone
+							break;
+						case "DeploymentLayer":
+							newNode = {id:id_helper,label:"DeploymentLayer", title:ci_name, rte:"unnamed RTE", port:"unnamed Port"}; //id, Label (DeploymentLayer), title (Wildfly8), rte, port
+							break;
+						case "Artefakt":
+							newNode = {id:id_helper,label:"Artefakt",title:ci_name, lizenz:"unnamed", sonstiges:"unnamed"};
+							break;
+						case "Anwendung":
+							newNode = {id:id_helper,label:"Anwendung",title:ci_name}; //id, Label (Anwendung), name (Graylog)
+							fillAnwendungsbox();
+							break;
+						case "Loadbalancer":
+							newNode = {id:id_helper,label:"Special",title:ci_name, kategorie:"Loadbalancer"}; //id, Label (Special), name (LB1)
+							break;
+						case "Firewall":
+							newNode = {id:id_helper,label:"Special",title:ci_name, kategorie:"Firewall"};
+							break;
+						case "Proxy":
+							newNode = {id:id_helper,label:"Special",title:ci_name, kategorie:"Proxy"};
+							break;
+						default:
+							//can't happen
+							alert("error in DB-model");
+					}
+
+
+					graph[ graph.nodes.length ] = newNode; //write it to the graph, so we dont need reload the whole page jsut the svg
+
+
+					force.nodes().push(newNode);
+					svg.selectAll(".node")
+						.data(force.nodes(), function(datum, index) { return index })
+						.enter()
+						.insert("g", "#graph");
+
+
+					labels.push({node: newNode});
+					labels.push({node: newNode});
+
+					/*
+					var labelSelection = svg.selectAll('g.labelNode')
+							.data(labels)
+							.enter()
+							.append('g')
+								.classed('labelNode',true);
+
+					labelSelection.append('text')
+							.text(ci_name)
+							.attr('x', mouseposX -30)
+							.attr('y',mouseposY - 30);
+
+					*/
+
+
+					/*
+					edges.push({
+								source: graph.nodes[1],
+								target: graph.nodes[1],
+								links: ["has_Child"]
+							});
+					*/
+
+					/*
+					links.push({
+							source: 2,
+							target: 12,
+							link: "has_child"
+						});
+					*/
+
+					force.stop();
+					labelForce.stop();
+					svg.selectAll("*").remove();
+					d3.select("#graph").remove();
+					d3.select("#notes").remove();
+
+					var my_tempParent = $('#container_for_graph');
+					my_tempParent.append( "<div id='graph'></div>" );
+					my_tempParent.append( "<div id='notes'></div>" );
+
+					visualize(true); //params: clear_labels = true
+				});
+		//}
+	}
+}
+
+
+//fill Anwendungen
+function fillAnwendungsbox()
+{
+	$.ajax({
+		type: "POST",
+		url: "get_allApplications.php",
+	success : function(text)
+	{
+		 response = text;
+	}
+	}).done(function( ) {
+
+		var selectBox = document.getElementById('sel_filter');
+		var selectBox2 = document.getElementById('sel1');
+
+
+		$('#sel_filter').find('option').remove().end();
+		$('#sel1').find('option').remove().end();
+
+
+
+		var optdefault = document.createElement('option');
+		optdefault.value = "alle Anwendungen";
+		optdefault.innerHTML = "alle Anwendungen";
+		selectBox.appendChild(optdefault);
+
+		var optdefault2 = document.createElement('option');
+		optdefault2.value = "--";
+		optdefault2.innerHTML = "--";
+		selectBox2.appendChild(optdefault2);
+
+
+		var erg = jQuery.parseJSON(response);
+
+		for (var i = 0; i<erg.length; i++){
+			var opt = document.createElement('option');
+			opt.value = erg[i];
+			opt.innerHTML = erg[i];
+			selectBox.appendChild(opt);
+
+			var opt2 = document.createElement('option');
+			opt2.value = erg[i];
+			opt2.innerHTML = erg[i];
+			selectBox2.appendChild(opt2);
+		}
+	});
+}
+
+
+
+//filtering anwendungen, artefakte, .... (aufegrufen via checkbox onclick)
+function doFiltering(checkboxnr){
+
+	if(checkboxnr == 1)
+		document.getElementById('sel_filter').selectedIndex = document.getElementById('sel1').selectedIndex; //synchronize the selectionmenus
+	else if(checkboxnr == 2)
+		document.getElementById('sel1').selectedIndex = document.getElementById('sel_filter').selectedIndex; //synchronize the selectionmenus
+
+
+	force.stop();
+	svg.selectAll("*").remove();
+	d3.select("#graph").remove();
+	d3.select("#notes").remove();
+
+	var my_tempParent = $('#container_for_graph');
+	my_tempParent.append( "<div id='waiting'>getting Data from the database...</div>" );//TODO: see if other request also take long
+	my_tempParent.append( "<div id='graph'></div>" );
+	my_tempParent.append( "<div id='notes'></div>" );
+
+	var AnwBool;
+	var ArtBool;
+	var DepBool;
+	var SerBool;
+	var HWBool;
+	var SpecBool;
+
+	var Anw_checkbox = document.getElementById("Anw_checkbox");
+	var Art_checkbox = document.getElementById('Art_checkbox');
+	var Dep_checkbox = document.getElementById('Dep_checkbox');
+	var Ser_checkbox = document.getElementById('Ser_checkbox');
+	var HW_checkbox = document.getElementById('HW_checkbox');
+	var Special_checkbox = document.getElementById('Special_checkbox');
+
+
+	if(!Anw_checkbox.checked){
+		AnwBool = false;
+	}else{
+		AnwBool = "n.type='Anwendung'";
+	}
+	if(!Art_checkbox.checked){
+		ArtBool = false;
+	}else{
+		ArtBool = "n.type='Artefakt'" ;
+	}
+	if(!Dep_checkbox.checked){
+		DepBool = false;
+	}else{
+		DepBool = "n.type='DeploymentLayer'";
+	}
+	if(!Ser_checkbox.checked){
+		SerBool = false;
+	}else{
+		SerBool = "n.type='Server'";
+	}
+	if(!HW_checkbox.checked){
+		HWBool = false;
+	}else{
+		HWBool = "n.type='Hardware'";
+	}
+	if(!Special_checkbox.checked){
+		SpecBool = false;
+	}else{
+		SpecBool = "n.type='Special'";
+	}
+
+	var Anwendungsfilter = document.getElementById('sel_filter').value;
+	labels = []; //has to be cleared after each request cause its global now
+
+
+	getDataFromNeo4J(AnwBool, ArtBool, DepBool, SerBool, HWBool, SpecBool, Anwendungsfilter, null, null); //anwe, art, dep, ser, hw, spec, ValueOfSelectbox, Wirkkette
+}
+
+function Anwendungssicht(){
+	force.stop();
+	svg.selectAll("*").remove();
+	d3.select("#graph").remove();
+	d3.select("#notes").remove();
+
+	var my_tempParent = $('#container_for_graph');
+	my_tempParent.append( "<div id='waiting'>getting Data from the database...</div>" );//TODO: see if other request also take long
+	my_tempParent.append( "<div id='graph'></div>" );
+	my_tempParent.append( "<div id='notes'></div>" );
+
+	//setzt Checkboxen und Selectbox auf Default
+	document.getElementById("Anw_checkbox").checked = true;
+	document.getElementById('Art_checkbox').checked = false;
+	document.getElementById('Dep_checkbox').checked = false;
+	document.getElementById('Ser_checkbox').checked = false;
+	document.getElementById('HW_checkbox').checked = false;
+	document.getElementById('Special_checkbox').checked = false;
+	document.getElementById('sel_filter').selectedIndex = 0;
+	document.getElementById('sel1').selectedIndex = 0;
+	labels = [];
+
+	getDataFromNeo4J("n.type='Anwendung'", false, false, false, false, false, null, null, null); //anwe, art, dep, ser, hw, spec, ValueOfSelectbox, CI-Search, Wirkkette
+}
+
+function Artefaktsicht(){
+	var anw_sel1_val = document.getElementById('sel1').value;
+	var anw_sel1_idx = document.getElementById('sel1').selectedIndex;
+
+	if(anw_sel1_val == "--")
+	{
+		alert("Bitte Anwendung wählen!");
+	}
+	else{
+		force.stop();
+		svg.selectAll("*").remove();
+		d3.select("#graph").remove();
+		d3.select("#notes").remove();
+
+		var my_tempParent = $('#container_for_graph');
+		my_tempParent.append( "<div id='waiting'>getting Data from the database...</div>" );//TODO: see if other request also take long
+		my_tempParent.append( "<div id='graph'></div>" );
+		my_tempParent.append( "<div id='notes'></div>" );
+
+
+		//setzt Checkboxen und Selectbox auf Default
+		document.getElementById("Anw_checkbox").checked = true;
+		document.getElementById('Art_checkbox').checked = true;
+		document.getElementById('Dep_checkbox').checked = false;
+		document.getElementById('Ser_checkbox').checked = false;
+		document.getElementById('HW_checkbox').checked = false;
+		document.getElementById('Special_checkbox').checked = true;
+		document.getElementById('sel_filter').selectedIndex = anw_sel1_idx;
+		document.getElementById('sel1').selectedIndex = anw_sel1_idx;
+		labels = [];
+
+		getDataFromNeo4J("n.type='Anwendung'", "n.type='Artefakt'", false, false, false, "n.type='Special'", anw_sel1_val, null, null); //anwe, art, dep, ser, hw, spec, ValueOfSelectbox, CI-Search, Wirkkette
+	}
+
+}
+
+function Instanzsicht(){
+	var anw_sel1_val = document.getElementById('sel1').value;
+	var anw_sel1_idx = document.getElementById('sel1').selectedIndex;
+
+	if(anw_sel1_val == "--")
+	{
+		alert("Bitte Anwendung wählen!");
+	}
+	else{
+		force.stop();
+		svg.selectAll("*").remove();
+		d3.select("#graph").remove();
+		d3.select("#notes").remove();
+
+		var my_tempParent = $('#container_for_graph');
+		my_tempParent.append( "<div id='waiting'>getting Data from the database...</div>" );//TODO: see if other request also take long
+		my_tempParent.append( "<div id='graph'></div>" );
+		my_tempParent.append( "<div id='notes'></div>" );
+
+
+		//setzt Checkboxen und Selectbox auf Default
+		document.getElementById("Anw_checkbox").checked = false;
+		document.getElementById('Art_checkbox').checked = false;
+		document.getElementById('Dep_checkbox').checked = false;
+		document.getElementById('Ser_checkbox').checked = true;
+		document.getElementById('HW_checkbox').checked = false;
+		document.getElementById('Special_checkbox').checked = false;
+		document.getElementById('sel_filter').selectedIndex = anw_sel1_idx;
+		document.getElementById('sel1').selectedIndex = anw_sel1_idx;
+		labels = [];
+
+		getDataFromNeo4J(false, false, false, "n.type='Server'", false, false, anw_sel1_val, null, null); //anwe, art, dep, ser, hw, spec, ValueOfSelectbox, CI-Search, Wirkkette
+	}
+
+}
+
+function Hardwaresicht(){
+	var anw_sel1_val = document.getElementById('sel1').value;
+	var anw_sel1_idx = document.getElementById('sel1').selectedIndex;
+
+	if(anw_sel1_val == "--")
+	{
+		alert("Bitte Anwendung wählen!");
+	}
+	else{
+		force.stop();
+		svg.selectAll("*").remove();
+		d3.select("#graph").remove();
+		d3.select("#notes").remove();
+
+		var my_tempParent = $('#container_for_graph');
+		my_tempParent.append( "<div id='waiting'>getting Data from the database...</div>" );//TODO: see if other request also take long
+		my_tempParent.append( "<div id='graph'></div>" );
+		my_tempParent.append( "<div id='notes'></div>" );
+
+
+		//setzt Checkboxen und Selectbox auf Default
+		document.getElementById("Anw_checkbox").checked = false;
+		document.getElementById('Art_checkbox').checked = false;
+		document.getElementById('Dep_checkbox').checked = false;
+		document.getElementById('Ser_checkbox').checked = true;
+		document.getElementById('HW_checkbox').checked = true;
+		document.getElementById('Special_checkbox').checked = false;
+		document.getElementById('sel_filter').selectedIndex = anw_sel1_idx;
+		document.getElementById('sel1').selectedIndex = anw_sel1_idx;
+		labels = [];
+
+		getDataFromNeo4J(false, false, false, "n.type='Server'", "n.type='Hardware'", false, anw_sel1_val, null, null); //anwe, art, dep, ser, hw, spec, ValueOfSelectbox, CI-Search, Wirkkette
+	}
+
+}
+
+
+//für search-for CIs box und Wirkketten-finden Box
+function SearchCI_or_EventChain(elem)
+{
+	var current_input = $(elem ).parent().prev().val();
+
+	if(current_input == "")
+	{
+		alert("Bitte Wert eingeben!")
+	}
+	else{
+		force.stop();
+		svg.selectAll("*").remove();
+		d3.select("#graph").remove();
+		d3.select("#notes").remove();
+
+		var my_tempParent = $('#container_for_graph');
+		my_tempParent.append( "<div id='waiting'>getting Data from the database...</div>" );//TODO: see if other request also take long
+		my_tempParent.append( "<div id='graph'></div>" );
+		my_tempParent.append( "<div id='notes'></div>" );
+
+		//setzt Checkboxen und Selectbox auf Default
+		document.getElementById("Anw_checkbox").checked = false;
+		document.getElementById('Art_checkbox').checked = false;
+		document.getElementById('Dep_checkbox').checked = false;
+		document.getElementById('Ser_checkbox').checked = false;
+		document.getElementById('HW_checkbox').checked = false;
+		document.getElementById('Special_checkbox').checked = false;
+		document.getElementById('sel_filter').selectedIndex = 0;
+		document.getElementById('sel1').selectedIndex = 0;
+		labels = [];
+
+		if(elem.id == "CIsearchBtn") //ci
+			getDataFromNeo4J(false, false, false, false, false, false, null, current_input, null); //anwe, art, dep, ser, hw, spec, ValueOfSelectbo, CI-Search, Wirkkette
+		else //event-chain
+			getDataFromNeo4J(false, false, false, false, false, false, null, null, current_input); //anwe, art, dep, ser, hw, spec, ValueOfSelectbo, CI-Search, wirkkettte
+	}
+}
+
+
+//START of all the actual basic visualisation begins here
+//http://stackoverflow.com/questions/29440613/return-the-graph-structure-of-a-neo4j-cypher-query-using-jquery
+
+var nodes = new Array();
+var links = new Array();
+var graph; //global variable that holds the current graph
+var svg; //has to be global for filtering
+var force = d3.layout.force(); //has to be global for the chargeslider
+
+var labels = [];
+//var mouseposX, mouseposY; //Helper to get mouseposition for adding nodes
+
+var labelForce = d3.layout.force();
+
+//var svg_edges = []; //global cause passing objects to function bug (node clicked -> delete)
+//var selected_svg_edge = []; //global cause passing objects to function bug (edge clicked -> delete)
+
+
+//handling the slider charge
+var slider = $('#ForceSlider').bootstrapSlider({
+	formatter: function(value) {
+	  force = force.charge(value)
+	  force.start()
+	  window.setTimeout(function() {
+	  force = force.charge(value)
+	  force.start()
+	  },3000);
+		return 'Current value: ' + value;
+	}
+});
+
+//handling the slider linkdistance
+var slider2 = $('#linkDistanceSlider').bootstrapSlider({
+	formatter: function(value) {
+	  force = force.linkDistance(value)
+	  force.start()
+	  window.setTimeout(function() {
+	  force = force.linkDistance(value)
+	  force.start()
+	  },3000);
+		return 'Current value: ' + value;
+	}
+});
+
+//handling the slider width
+var slider3 = $('#sizeSlider').bootstrapSlider({
+	formatter: function(value) {
+		$('#graph').css("width", value);
+		//$('#graph').css("margin-left", -50);
+		//$('#graph').css("margin-top", -50);
+	  return 'Current value: ' + value;
+	}
+});
+
+
+//Handling the DRAG; stolen from http://stackoverflow.com/questions/34970477/disable-force-in-forcelayout-algorithm-in-d3
+function start_stop_drag()
+{
+	function dragstart(d, i) {
+
+	  force.stop() // stops the force auto positioning before you start dragging
+	}
+
+	function dragmove(d, i) {
+	  d.fixed = true;
+	  d.px += d3.event.dx;
+	  d.py += d3.event.dy;
+	  d.x += d3.event.dx;
+	  d.y += d3.event.dy;
+	  force.resume()
+	}
+
+	function dragend(d, i) {
+	   // of course set the node to fixed so the force doesn't include the node in its auto positioning stuff
+	  force.resume();
+	}
+
+	if(document.getElementById('Drag_checkbox').checked == true) //start drag
+	{
+	 var node_drag = d3.behavior.drag()
+	  .on("dragstart", dragstart)
+	  .on("drag", dragmove)
+	  .on("dragend", dragend);
+
+	  svg.selectAll(".node").call(node_drag);
+	}
+	else //reset drag
+	{
+	//reset all fixed node
+	  svg.selectAll(".node")[0].forEach(function(d){
+		d3.select(d).data()[0].fixed = false;
+	  });
+	  //remove drag listener
+	  svg.selectAll(".node").on('mousedown.drag', null);
+	  force.resume();
+	  //nodeSelection.call(force.drag); //TODO
+	}
+}
+
+
+//get the Data and start everything
+//aus Performancegründen beim Start nur Anw. und Artefakte
+getDataFromNeo4J("n.type='Anwendung'", false, false, false, false, false, null, null, null); //Anwendungssicht per Default
+
+
+function getDataFromNeo4J(AnwBool, ArtBool, DepBool, SerBool, HWBool, SpecBool, Anwendungsfilter, CIsearch, Wirkkette){
+	//reset arrays for further filtering
+	 nodes = [];
+	 links = [];
+	 graph = {};
+	 var query;
+
+	 if(CIsearch == null && Wirkkette == null)//Suchbox der CI bzw. wirkkette geht vor
+	 {
+		 //START get relevant Edges For Filtering
+		 var edgeAAr = false;
+		 var edgeArD = false;
+		 var edgeDS = false;
+		 var edgeSH = false;
+
+		 var edgeReq = false;
+		 var edgeUses = false;
+		 var edgeComm_with = false;
+
+		 var singleAnw = ""; //so i can also get the nodes that have no edges
+		 var singleAnw2 = "";
+		 var singleArt = "";
+		 var singleArt2 = "";
+		 var singleDepl = "";
+		 var singleDepl2 = "";
+		 var singleSer = "";
+		 var singleSer2 = "";
+		 var singleHW = "";
+		 var singleHW2 = "";
+		 var singleSpec = "";
+		 var singleSpec2 = "";
+
+		 if(AnwBool != false) //Anwendungssicht (nur Anwendungen)
+		 {
+			singleAnw = "(v:Anwendung)";
+			singleAnw2 = "v,";
+		 }
+		 if(ArtBool != false) //nur Artefakte
+		 {
+			singleArt = ", (w:Artefakt)";
+			singleArt2 = "w,";
+		 }
+		 if(DepBool != false) //nur Depl
+		 {
+			singleDepl = ", (x:DeploymentLayer)";
+			singleDepl2 = "x,";
+		 }
+		 if(SerBool != false) //nur Server
+		 {
+			singleSer = ", (y:Server)";
+			singleSer2 = "y,";
+		 }
+		 if(HWBool != false) //nur HW
+		 {
+			singleHW = ", (z:Hardware)";
+			singleHW2 = "z,";
+		 }
+		 if(SpecBool != false) //nur Spec
+		 {
+			singleSpec = ", (s:Special)";
+			singleSpec2 = "s,";
+		 }
+
+		 //Kanten die gefiltert werden sollen festlegen
+		 if(AnwBool != false && ArtBool != false && SpecBool == false) //anw-> Artefakt
+		 {
+			edgeAAr = "type(r)='has_child' AND m.type='Artefakt'";
+		 }else{
+			edgeAAr = false;
+		 }
+		 if(ArtBool != false && DepBool != false) //Art -> Depl
+		 {
+			edgeArD = "type(r)='deployed_On'";
+
+		 }else{
+			edgeArD = false;
+		 }
+		 if(DepBool != false && SerBool != false) //Depl -> Server
+		 {
+			edgeDS = "type(r)='installed_On'";
+
+		 }else{
+			edgeDS = false;
+		 }
+		 if(SerBool != false && HWBool != false) //Server -> HW
+		 {
+			edgeSH = "type(r)='instanced_On'";
+
+		 }else{
+			edgeSH = false;
+		 }
+		 if(AnwBool != false && SpecBool != false && ArtBool == false) //anw-> Special
+		 {
+			edgeAAr = "type(r)='has_child' AND m.type='Special'";
+		 }
+		 if(AnwBool != false && SpecBool != false && ArtBool != false) //beides Anw -> Special und Artefakt
+		 {
+			edgeAAr = "type(r)='has_child'";
+		 }
+
+		 //hat sich als sinnvoll ergeben immer alle beziehungen anzuzeigen
+		 //Artefaktebez.
+		 if((ArtBool != false || SpecBool != false) ) //&& !(Anwendungsfilter == null || Anwendungsfilter == "alle Anwendungen")
+		 {
+			edgeReq = "type(r)='requires'";
+			edgeUses = "type(r)='uses'";
+		 }else{
+			edgeReq = false;
+			edgeUses = false;
+		 }
+
+		 //Serverbez.
+		 if(SerBool != false ) //&&!(Anwendungsfilter == null || Anwendungsfilter == "alle Anwendungen")
+		 {
+			edgeComm_with = "type(r)='communicates_with'";
+		 }else{
+			edgeComm_with = false;
+		 }
+		 //ENDE
+
+		 if(Anwendungsfilter == null || Anwendungsfilter == "alle Anwendungen")
+		 {
+			//alle Anw.
+			query = {"statements":[{"statement":"MATCH path=(n)-[r*]-(m)  RETURN COLLECT([  filter(n in nodes(path) WHERE  "+
+				"("+AnwBool+" OR "+ArtBool+" OR "+DepBool+" OR "+SerBool+" OR "+HWBool+")), "+
+				"filter(r in relationships(path) WHERE "+edgeAAr+" OR  "+edgeArD+" OR "+edgeDS+" OR "+edgeSH+" OR "+edgeReq+" OR "+edgeUses+"  OR "+edgeComm_with+") ]) AS data" +
+				" UNION MATCH "+singleAnw+" "+singleArt+" "+singleDepl+" "+singleSer+" "+singleHW+" "+singleSpec+" RETURN COLLECT ([ "+singleAnw2+" "+singleArt2+" "+singleDepl2+" "+singleSer2+" "+singleHW2+" "+singleSpec2+" false]) as data",
+					"resultDataContents":["graph","row"]}]};
+		 }
+		 else{ //nur eine best. Anwendung (oder spezielle Sicht einer Anwendung gewählt); hier werde keine einzelnen Knoten angezeigt
+			// The query [r*1..4] (maximale entfernung von 4 von der Anw.) makes the query slow -> if-else only for performance
+			query= {"statements":[{"statement":"MATCH path=(n)-[r*]-(m) WHERE n.name='"+Anwendungsfilter+"' RETURN  COLLECT([ filter(n in nodes(path) WHERE  "+
+			"("+AnwBool+" OR "+ArtBool+" OR "+DepBool+" OR "+SerBool+" OR "+HWBool+")), "+
+			"filter(r in relationships(path) WHERE "+edgeAAr+" OR  "+edgeArD+" OR "+edgeDS+" OR "+edgeSH+"  OR "+edgeReq+" OR "+edgeUses+"  OR "+edgeComm_with+") ]) AS data" +
+			" UNION MATCH (v:Anwendung)  WHERE v.name='"+Anwendungsfilter+"' RETURN COLLECT(v) as data",
+				"resultDataContents":["graph","row"]}]};
+		 }
+	 }
+	 else if(Wirkkette != null){//Suchbox der Wirkkette geht vor
+		//get Wirkkette
+		//exakte Schreibweise beachten
+
+		if(document.getElementById("Urs_checkbox").checked == true){
+			//Ursachenwirkkette
+			query= {"statements":[{"statement":"MATCH p=allShortestPaths( (a {name:'"+Wirkkette+"'})-[*]->(b) ) RETURN p;",
+			"resultDataContents":["graph","row"]}]};
+		  }else{
+			//Auswirkungswirkkette
+			query= {"statements":[{"statement":"match p=(v)-[r*]->(w) WHERE w.name='"+Wirkkette+"' RETURN p",
+			"resultDataContents":["graph","row"]}]};
+		  }
+
+	 }
+	 else{
+		//get CI
+		//(?i) --> case-insesitiv
+		query= {"statements":[{"statement":"MATCH (a) WHERE a.name =~ '.*(?i)"+CIsearch+".*' OR a.Lizenz=~ '.*(?i)"+CIsearch+".*' OR a.Sonstiges=~ '.*(?i)"+CIsearch+".*' OR a.DeploymentLayer=~ '.*(?i)"+CIsearch+".*'"+
+				" OR a.RTE=~ '.*(?i)"+CIsearch+".*' OR a.Port=~ '.*(?i)"+CIsearch+".*' OR a.Zone=~ '.*(?i)"+CIsearch+".*' OR a.OS=~ '.*(?i)"+CIsearch+".*' RETURN a",
+					"resultDataContents":["graph","row"]}]};
+	 }
+
+
+	//the helper function provided by neo4j documents
+	function idIndex(a,id) {
+		for (var i=0;i<a.length;i++) {
+			if (a[i].id == id) return i;}
+		return null;
+	}
+	// jQuery ajax call
+	var request = $.ajax({
+		type: "POST",
+		url: "/api/db/data/transaction/commit",
+		accepts: "application/json" ,
+		dataType: "json",
+		headers: {
+		"Authorization": "Basic " + btoa("neo4j" + ":" + "test"), //without this u get a prompt asking for pw
+		"Accept" : "application/json"
+		},
+		contentType:"application/json",
+		data: JSON.stringify(query),
+		//now pass a callback to success to do something with the data
+		success: function (data) {
+			// parsing the output of neo4j rest api
+			data.results[0].data.forEach(function (row) {
+				row.graph.nodes.forEach(function (n) {
+					if (idIndex(nodes,n.id) == null){
+						switch(n.labels[0]) {
+						case "Hardware":
+							nodes.push({id:n.id,label:n.labels[0],title:n.properties.name}); //id, Label=type (Hardware), name (X86 Strang xy)
+							break;
+						case "Server":
+							nodes.push({id:n.id,label:n.labels[0],title:n.properties.name, os:n.properties.OS, zone:n.properties.Zone}); //id, Label (Server), name (upxy), OS, Zone
+							break;
+						case "DeploymentLayer":
+							nodes.push({id:n.id,label:n.labels[0], title:n.properties.DeploymentLayer, rte:n.properties.RTE, port:n.properties.Port}); //id, Label (DeploymentLayer), title (Wildfly8), rte, port
+							break;
+						case "Artefakt":
+							nodes.push({id:n.id,label:n.labels[0],title:n.properties.name, lizenz:n.properties.Lizenz, sonstiges:n.properties.Sonstiges}); //id, Label (Art.), name (MongoDB), Liz., Son.
+							break;
+						case "Anwendung":
+							nodes.push({id:n.id,label:n.labels[0],title:n.properties.name}); //id, Label (Anwendung), name (Graylog)
+							break;
+						case "Special":
+							nodes.push({id:n.id,label:n.labels[0],title:n.properties.name, kategorie:n.properties.kategorie}); //id, Label (Special), name (LB1), Loadbalancer
+							break;
+						default:
+							//can't happen
+							nodes.push({id:n.id,label:n.labels[0],title:n.properties.name});
+						}
+					}
+				});
+				links = links.concat( row.graph.relationships.map(function(r) {
+					// the neo4j documents has an error : replace start with source and end with target
+					return {source:idIndex(nodes,r.startNode),target:idIndex(nodes,r.endNode),type:r.type};
+				}));
+			});
+
+			// Waiting box entfernen
+			if(document.getElementById("waiting") != null)
+			{
+				var waitingBox = document.getElementById("waiting");
+				if (waitingBox.parentNode) {
+				waitingBox.parentNode.removeChild(waitingBox);
+				}
+			}
+
+			graph = {nodes:nodes, links:links};
+
+			//removing and setting the container for adjusting the viewbox
+			d3.select("#graph").remove();
+			d3.select("#notes").remove();
+			var my_tempParent = $('#container_for_graph');
+			my_tempParent.append( "<div id='graph'></div>" );
+			my_tempParent.append( "<div id='notes'></div>" );
+
+			//go and visualize
+			visualize(false);
+
+		},
+		error: function(xhr, ajaxOptions, thrownError){
+			alert(xhr.status + " " + thrownError + " Datenbankverbindungsfehler");
+		}
+	});
+}
+
+function visualize(clear_labels){
+
+// Now do something awesome with the graph!
+ var width = 780,
+ height = 680;
+
+// Visual properties of the graph are next. We need to make
+// those that are going to be animated accessible to the
+// JavaScript.
+
+var labelFill = '#444';
+var adjLabelFill = '#aaa';
+var edgeStroke = '#aaa';
+var nodeFill = '#ccc';
+var nodeRadius = 11; //change from 10 to 11 cause of icons
+var selectedNodeRadius = 30;
+
+var linkDistance = 30; //Math.min(width,height)/4;
+
+
+//TODO kind a buggy - sometimes radius changes sometimes not
+var anyNodeSelected = false; //default there is no selected node (variable for resuming by canvasclicks)
+var temp_helper = false; // helper for anyNodeSelected
+
+// Find the main graph container.
+
+var graphContainer = d3.select('#graph');
+
+// Create the SVG container for the visualization and
+// define its dimensions.
+
+svg = graphContainer.append('svg')
+	.attr("viewBox", "0 0 " + 1000 + " " + 700 )
+	.attr("preserveAspectRatio", "xMidYMid meet")
+	.on('click',  function() {
+
+			//alert("resume");
+			if(anyNodeSelected == true)
+			{
+				if(temp_helper == true)
+				{
+					d3.selectAll("circle")
+						.transition()
+						.attr('r', nodeRadius)
+						.attr({nodeStatus:
+						function(d) {
+							switch(d.label) {
+							case "Hardware":
+								this.style.fill = "url(#hwimg)"; //url(#image)
+								break;
+							case "Server":
+								this.style.fill = "url(#serverimg)";
+								break;
+							case "DeploymentLayer":
+								this.style.fill = "url(#deplimg)";
+								break;
+							case "Artefakt":
+								this.style.fill = "url(#artimg)";
+								break;
+							case "Anwendung":
+								this.style.fill = "url(#anwimg)";
+								break;
+							case "Special":
+								switch(d.kategorie) {
+								case "Loadbalancer":
+									this.style.fill = "url(#lbimg)"; //url(#image)
+									break;
+								case "Firewall":
+									this.style.fill = "url(#fwimg)"; //url(#image)
+									break;
+								case "Proxy":
+									this.style.fill = "url(#proxyimg)"; //url(#image)
+									break;
+							}
+								break;
+							default:
+								//can't happen
+							}
+							return (d);
+						}
+					});
+
+					labelSelection
+						.transition()
+						.style('opacity', 1)
+						.selectAll('text')
+						.style('fill', labelFill);
+
+				}
+
+				temp_helper = true;
+			}
+			else{
+				temp_helper = false;
+			}
+
+
+			/*
+			d3.selectAll('circle[data-node-index="'+node.index+'"]')
+					.transition()
+					.attr('r', selectedNodeRadius)
+					.style('fill', node.color);
+					*/
+
+	}
+	);
+	//.attr('width', width)
+	//.attr('height', height)
+	//.attr('viewBox', "0 0 894 686"); //doing it responsive
+
+// Select the container for the notes and dimension it.
+
+var notes = d3.select('#notes')
+	.style({
+		'width': 720-width + 'px',
+		'height': height + 'px'
+	});
+
+// Utility function to update the position properties
+// of an arbtrary edge that's part of a D3 selection.
+// The optional parameter is the array of nodes for
+// the edges. If present, the source and target properties
+// are assumed to be indices in this array rather than
+// direct references.
+
+var positionEdge = function(edge, nodes) {
+	edge.attr('x1', function(d) {
+		return nodes ? nodes[d.source].x : d.source.x;
+	}).attr('y1', function(d) {
+		return nodes ? nodes[d.source].y : d.source.y;
+	}).attr('x2', function(d) {
+		return nodes ? nodes[d.target].x : d.target.x;
+	}).attr('y2', function(d) {
+		return nodes ? nodes[d.target].y : d.target.y;
+	});
+};
+
+// Utility function to update the position properties
+// of an arbitrary node that's part of a D3 selection.
+
+var positionNode = function(node) {
+	node.attr('transform', function(d) {
+		if(typeof d.x !='undefined')
+			return 'translate(' + d.x + ',' + d.y + ')';
+	});
+};
+
+// Utility function to position text associated with
+// a label pseudo-node. The optional third parameter
+// requests transition to the specified fill color.
+
+//Experimental reason cause sometimes the query needs too long and text values are not assigned
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+var positionLabelText = async function(text, pseudonode, fillColor) {
+
+	//
+	await sleep(1000);
+
+	// What's the width of the text element?
+
+	var textWidth = text.getBBox().width;
+
+	// How far is the pseudo-node from the real one?
+
+	var diffX = pseudonode.x - pseudonode.node.x;
+	var diffY = pseudonode.y - pseudonode.node.y;
+	var dist = Math.sqrt(diffX * diffX + diffY * diffY);
+
+	// Shift in the x-direction a fraction of the text width
+
+	var shiftX = textWidth * (diffX - dist) / (dist * 2);
+	shiftX = Math.max(-textWidth, Math.min(0, shiftX));
+
+	var shiftY = pseudonode.node.selected ? selectedNodeRadius : nodeRadius;
+	shiftY = 0.5 * shiftY * diffY/Math.abs(diffY);
+
+	var select = d3.select(text);
+	if (fillColor) {
+		select = select.transition().style('fill', fillColor);
+	}
+	select.attr('transform', 'translate(' + shiftX + ',' + shiftY + ')');
+
+};
+
+
+// Identify all the indivual links between nodes on
+// the graph. As noted above, we're using the term
+// "link" to refer to a single connection. As we'll
+// see below, we'll call lines drawn on the graph
+// (which may represent a combination of multiple
+// links) "edges" in a nod to the more mathematically
+// minded.
+
+
+// Start by iterating through the albums.
+
+graph.links.forEach(function(srcNode, srcIdx, srcList) {
+
+	// For each album, iterate through the dataflow.
+
+	// When we do find a match, add a new
+	// link to the links array.
+
+	links.push({
+		source: srcNode.source,
+		target: srcNode.target,
+		link: srcNode.type
+	});
+
+});
+
+
+
+
+
+	// Now create the edges for our graph. We do that by
+	// eliminating duplicates from the links array.
+	var edges = [];
+
+
+	// Iterate through the links array.
+
+	links.forEach(function(link) {
+
+		// Assume for now that the current link is
+		// unique.
+
+		var existingEdge = false;
+
+		// Look through the edges we've collected so
+		// far to see if the current link is already
+		// present.
+
+		for (var idx = 0; idx < edges.length; idx++) {
+
+			// A duplicate link has the same source
+			// and target values.
+
+			if ((link.source === edges[idx].source) &&
+				(link.target === edges[idx].target)) {
+
+				// When we find an existing link, remember
+				// it.
+				existingEdge = edges[idx];
+
+				// And stop looking.
+
+				break;
+			}
+		}
+
+
+		if(typeof existingEdge.links =='undefined')//HARDfix to get out doubles and undefineds
+		{
+			// If we found an existing edge, all we need
+			// to do is add the current link to it.
+			if (existingEdge) {
+				existingEdge.links.push(link.link);
+
+			} else {
+
+				// If there was no existing edge, we can
+				// create one now.
+				if(link.link) //nur bestimmte kanten anzeigen //HARDfix
+				{
+					edges.push({
+						source: link.source,
+						target: link.target,
+						links: [link.link]
+					});
+				}
+			}
+		}
+	});
+
+
+		  //hack to get Arcs
+		  var linkHack = svg.append("svg:defs").selectAll(".edge")
+			.data(["target"])      // Different link/path types can be defined here
+			.enter().append("svg:marker")    // This section adds in the arrows
+			.attr("id", String)
+			.attr("viewBox", "0 -5 10 10")
+			.attr("refX", 15)
+			.attr("refY", -1.5)
+			.attr("markerWidth", 6)
+			.attr("markerHeight", 6)
+			.attr("orient", "auto")
+			.append("svg:path")
+			.attr("d", "M0,-5L10,0L0,5");
+
+		//hack to get Imgs (HW)
+		  var hackImgsHW = svg.append("svg:defs")
+		  .attr("id", "hwdef")
+		  .append("svg:pattern")
+			.attr("id", "hwimg")
+			.attr("x", 0)
+			.attr("y", 0)
+			.attr("height", 30)
+			.attr("width", 30)
+		  .append("svg:image")
+		   .attr('x', 0)
+			.attr('y',0)
+			.attr('width', 20)
+			.attr('height', 20)
+			.attr("xlink:href","img/hw.png")
+
+		//hack to get Imgs (Server)
+		  var hackImgsServer = svg.append("svg:defs")
+		  .attr("id", "serverdef")
+		  .append("svg:pattern")
+			.attr("id", "serverimg")
+			.attr("x", 0)
+			.attr("y", 0)
+			.attr("height", 30)
+			.attr("width", 30)
+		  .append("svg:image")
+		   .attr('x', 0)
+			.attr('y',0)
+			.attr('width', 20)
+			.attr('height', 20)
+			.attr("xlink:href","img/server.png")
+
+		//hack to get Imgs (depl)
+		  var hackImgsDepl = svg.append("svg:defs")
+		  .attr("id", "depldef")
+		  .append("svg:pattern")
+			.attr("id", "deplimg")
+			.attr("x", 0)
+			.attr("y", 0)
+			.attr("height", 30)
+			.attr("width", 30)
+		  .append("svg:image")
+		   .attr('x', 0)
+			.attr('y',0)
+			.attr('width', 15)
+			.attr('height', 15)
+			.attr("xlink:href","img/deployment.png")
+
+		//hack to get Imgs (Artefakte)
+		  var hackImgsArt = svg.append("svg:defs")
+		  .attr("id", "artdef")
+		  .append("svg:pattern")
+			.attr("id", "artimg")
+			.attr("x", 0)
+			.attr("y", 0)
+			.attr("height", 30)
+			.attr("width", 30)
+		  .append("svg:image")
+		   .attr('x', 0)
+			.attr('y',0)
+			.attr('width', 20)
+			.attr('height', 20)
+			.attr("xlink:href","img/artefakt.png")
+
+		//hack to get Imgs (Anwendungen)
+		  var hackAnwArt = svg.append("svg:defs")
+		  .attr("id", "anwdef")
+		  .append("svg:pattern")
+			.attr("id", "anwimg")
+			.attr("x", 0)
+			.attr("y", 0)
+			.attr("height", 30)
+			.attr("width", 30)
+		  .append("svg:image")
+		   .attr('x', 0)
+			.attr('y',0)
+			.attr('width', 20)
+			.attr('height', 20)
+			.attr("xlink:href","img/anwendung.png")
+
+		//hack to get Imgs (lb)
+		  var hackLBArt = svg.append("svg:defs")
+		  .attr("id", "lbdef")
+		  .append("svg:pattern")
+			.attr("id", "lbimg")
+			.attr("x", 0)
+			.attr("y", 0)
+			.attr("height", 30)
+			.attr("width", 30)
+		  .append("svg:image")
+		   .attr('x', 0)
+			.attr('y',0)
+			.attr('width', 20)
+			.attr('height', 20)
+			.attr("xlink:href","img/lb.png")
+
+		//hack to get Imgs (firewall)
+		  var hackFWArt = svg.append("svg:defs")
+		  .attr("id", "fwdef")
+		  .append("svg:pattern")
+			.attr("id", "fwimg")
+			.attr("x", 0)
+			.attr("y", 0)
+			.attr("height", 30)
+			.attr("width", 30)
+		  .append("svg:image")
+		   .attr('x', 0)
+			.attr('y',0)
+			.attr('width', 20)
+			.attr('height', 20)
+			.attr("xlink:href","img/firewall.png")
+
+		//hack to get Imgs (firewall)
+		  var hackProxyArt = svg.append("svg:defs")
+		  .attr("id", "proxydef")
+		  .append("svg:pattern")
+			.attr("id", "proxyimg")
+			.attr("x", 0)
+			.attr("y", 0)
+			.attr("height", 30)
+			.attr("width", 30)
+		  .append("svg:image")
+		   .attr('x', 0)
+			.attr('y',0)
+			.attr('width', 20)
+			.attr('height', 20)
+			.attr("xlink:href","img/proxy.png")
+
+		  // render relationships as lines
+		  var edgeSelection = svg.selectAll(".edge")
+				  .data(edges)
+				  .enter()
+				  .append("line")
+				  .classed('edge', true)
+				  .style('stroke', edgeStroke)
+				  .attr("marker-end", "url(#target)")	//nicht IE tauglich
+				  .attr({edgeStatus:
+					function(d) {
+						switch(d.links[0]) {
+						case "requires": //TODO auf Artefaktbeziehung anpassen
+							this.style.stroke = 'red';
+							break;
+						case "uses": //TODO auf Artefaktbeziehung anpassen
+							this.style.stroke = 'pink';
+							break;
+						case "communicates_with": //TODO auf Artefaktbeziehung anpassen
+							this.style.stroke = 'orange';
+							break;
+						default:
+							this.style.stroke = edgeStroke;
+						}
+						return (d);
+					}
+				});
+
+			var lastdblClick = null;
+			var kante;
+
+		  // render nodes as circles, css-class from label
+		  var nodeSelection = svg.selectAll(".node")
+					.data(graph.nodes)
+					.enter()
+					.append('g')
+					.on('dblclick',  function(d) {
+
+
+
+							if(lastdblClick == null)
+							{
+								//kante = prompt("Kantenbeschriftung", "has_child");
+								$("#chosen_edge").children().eq(0).prop('disabled', true); //immmer
+
+								switch(d.label) {
+									case "Anwendung":
+										$("#chosen_edge").children().eq(1).prop('disabled', false);
+										$("#chosen_edge").children().eq(2).prop('disabled', true);
+										$("#chosen_edge").children().eq(3).prop('disabled', true);
+										$("#chosen_edge").children().eq(4).prop('disabled', true);
+										$("#chosen_edge").children().eq(5).prop('disabled', true);
+										$("#chosen_edge").children().eq(6).prop('disabled', true);
+										$("#chosen_edge").children().eq(7).prop('disabled', true);
+										break;
+								case "Artefakt":
+										$("#chosen_edge").children().eq(1).prop('disabled', true);
+										$("#chosen_edge").children().eq(2).prop('disabled', false);
+										$("#chosen_edge").children().eq(3).prop('disabled', true);
+										$("#chosen_edge").children().eq(4).prop('disabled', true);
+										$("#chosen_edge").children().eq(5).prop('disabled', false);
+										$("#chosen_edge").children().eq(6).prop('disabled', false);
+										$("#chosen_edge").children().eq(7).prop('disabled', true);
+										break;
+								case "DeploymentLayer":
+										$("#chosen_edge").children().eq(1).prop('disabled', true);
+										$("#chosen_edge").children().eq(2).prop('disabled', true);
+										$("#chosen_edge").children().eq(3).prop('disabled', false);
+										$("#chosen_edge").children().eq(4).prop('disabled', true);
+										$("#chosen_edge").children().eq(5).prop('disabled', true);
+										$("#chosen_edge").children().eq(6).prop('disabled', true);
+										$("#chosen_edge").children().eq(7).prop('disabled', true);
+										break;
+								case "Server":
+										$("#chosen_edge").children().eq(1).prop('disabled', true);
+										$("#chosen_edge").children().eq(2).prop('disabled', true);
+										$("#chosen_edge").children().eq(3).prop('disabled', true);
+										$("#chosen_edge").children().eq(4).prop('disabled', false);
+										$("#chosen_edge").children().eq(5).prop('disabled', true);
+										$("#chosen_edge").children().eq(6).prop('disabled', true);
+										$("#chosen_edge").children().eq(7).prop('disabled', false);
+										break;
+								case "Hardware":
+										$("#chosen_edge").children().eq(1).prop('disabled', true);
+										$("#chosen_edge").children().eq(2).prop('disabled', true);
+										$("#chosen_edge").children().eq(3).prop('disabled', true);
+										$("#chosen_edge").children().eq(4).prop('disabled', true);
+										$("#chosen_edge").children().eq(5).prop('disabled', true);
+										$("#chosen_edge").children().eq(6).prop('disabled', true);
+										$("#chosen_edge").children().eq(7).prop('disabled', true);
+										break;
+								case "Special":
+										$("#chosen_edge").children().eq(1).prop('disabled', true);
+										$("#chosen_edge").children().eq(2).prop('disabled', true);
+										$("#chosen_edge").children().eq(3).prop('disabled', true);
+										$("#chosen_edge").children().eq(4).prop('disabled', true);
+										$("#chosen_edge").children().eq(5).prop('disabled', false);
+										$("#chosen_edge").children().eq(6).prop('disabled', false);
+										$("#chosen_edge").children().eq(7).prop('disabled', true);
+										break;
+									default:
+										//cant happen
+								}
+
+
+
+								$( "#edge_selector" ).dialog( "open" );
+								$( "#edge_selector" ).dialog({
+								  buttons: [
+									{
+									  text: "Ok",
+									  icon: "ui-icon-circle-check",
+									  click: function() {
+										$( this ).dialog( "close" );
+										kante = document.getElementById("chosen_edge").options[document.getElementById("chosen_edge").selectedIndex].text;
+										lastdblClick = d;
+
+										//while in edgeselection mode the label text of the first selected node gets bold
+										labelSelection
+											.filter(function(label) {return label.node === d;})
+											.selectAll('text')
+											.style('font-weight', "900");
+									  }
+
+									}
+								  ],
+									close: function () {
+										if(typeof kante !='undefined')
+										{
+											lastdblClick = null;
+										}
+									}
+								});
+
+
+							}
+							else
+							{
+								//resume bold
+								labelSelection
+									.filter(function(label) {return label.node === lastdblClick;})
+									.selectAll('text')
+									.style('font-weight', "normal");
+
+								draw_edge_allowed =  false;
+
+								switch(kante) {
+									case "Bitte wählen!":
+										alert("Fehler! Bitte Kantenbeschriftung auswählen!");
+										lastdblClick = null;
+										break;
+									case "has_child":
+										if((d.label == "Artefakt" && lastdblClick.label == "Anwendung") || (d.label == "Special" && lastdblClick.label == "Anwendung"))
+										{
+											draw_edge_allowed = true;
+										}
+										else{
+											alert("Fehler! Beziehung nur für Anwendung -> Artefakt/Special erlaubt");
+											lastdblClick = null;
+
+										}
+										break;
+									case "deployed_On":
+										if(d.label != "DeploymentLayer" || lastdblClick.label != "Artefakt")
+										{
+											alert("Fehler! Beziehung nur für Artefakt -> Deployment-Layer erlaubt");
+											lastdblClick = null;
+										}
+										else{
+											draw_edge_allowed = true;
+										}
+
+										break;
+									case "installed_On":
+										if(d.label != "Server" || lastdblClick.label != "DeploymentLayer")
+										{
+											alert("Fehler! Beziehung nur für Deployment-Layer -> Server erlaubt");
+											lastdblClick = null;
+										}
+										else{
+											draw_edge_allowed = true;
+										}
+
+										break;
+									case "instanced_On":
+										if(d.label != "Hardware" || lastdblClick.label != "Server")
+										{
+											alert("Fehler! Beziehung nur für Server -> Hardware erlaubt");
+											lastdblClick = null;
+										}
+										else{
+											draw_edge_allowed = true;
+										}
+
+										break;
+									case "requires":
+										if((d.label == "Artefakt" && lastdblClick.label == "Artefakt") || (d.label == "Special" && lastdblClick.label == "Special")
+										|| (d.label == "Artefakt" && lastdblClick.label == "Special") || (d.label == "Special" && lastdblClick.label == "Artefakt"))
+										{
+											draw_edge_allowed = true;
+										}
+										else{
+											alert("Fehler! Beziehung nur für Artefakt -> Artefakt erlaubt");
+											lastdblClick = null;
+
+										}
+										break;
+									case "uses":
+										if((d.label == "Artefakt" && lastdblClick.label == "Artefakt") || (d.label == "Special" && lastdblClick.label == "Special")
+										|| (d.label == "Artefakt" && lastdblClick.label == "Special") || (d.label == "Special" && lastdblClick.label == "Artefakt"))
+										{
+											draw_edge_allowed = true;
+										}
+										else{
+											alert("Fehler! Beziehung nur für Artefakt -> Artefakt erlaubt");
+											lastdblClick = null;
+
+										}
+										break;
+									case "communicates_with":
+										if(d.label != "Server" || lastdblClick.label != "Server")
+										{
+											alert("Fehler! Beziehung nur für Server -> Server erlaubt");
+											lastdblClick = null;
+										}
+										else{
+											draw_edge_allowed = true;
+										}
+										break;
+									default:
+										//cant happen
+										lastdblClick = null;
+								}
+
+								if(draw_edge_allowed == true)
+								{
+									draw_edge_allowed = false;
+
+									if(lastdblClick != d) //Kante auf sich selbst verbieten
+									{
+
+										//draw edge
+										links.push({
+											source: lastdblClick,
+											target: d,
+											link: kante
+										});
+
+
+										//TODO: adding incidentedge values so you can delete nodes just added without staying edges
+										/*
+										var tempEdgeSel = edgeSelection
+											.filter(function(edge) {
+												return nodes[edge.source] === lastdblClick ||
+													   nodes[edge.target] === d;
+											});
+										d.incidentEdgeSelection.push(tempEdgeSel);
+										*/
+
+										//d.incidentEdgeSelection[0].push(d.incidentEdgeSelection[0][0]);
+
+
+										drawEdgeInDB(lastdblClick.id, d.id, kante) //bring it to neo4j
+										lastdblClick = null;
+
+										force.stop();
+										labelForce.stop();
+										svg.selectAll("*").remove();
+										d3.select("#graph").remove();
+										d3.select("#notes").remove();
+
+										var my_tempParent = $('#container_for_graph');
+										//my_tempParent.append( "<div id='waiting'>getting Data from the database...</div>" );//TODO: see if other request also take long
+										my_tempParent.append( "<div id='graph'></div>" );
+										my_tempParent.append( "<div id='notes'></div>" );
+										visualize(true);
+
+										//reloadSVG();
+
+									}
+									else{
+										alert("Fehler! Kanten auf sich selbst verboten!");
+										lastdblClick = null;
+									}
+								}
+
+
+							}
+
+							//callback for node clicked next???
+
+						}
+					)
+					.classed('node', true)
+					.call(positionNode);
+
+
+
+			nodeSelection.append('circle')
+				.attr('r', nodeRadius)
+				.attr('data-node-index', function(d,i) { return i;})
+				.attr({nodeStatus:
+					function(d) {
+						switch(d.label) {
+						case "Hardware":
+							this.style.fill = "url(#hwimg)"; //url(#image)
+							break;
+						case "Server":
+							this.style.fill = "url(#serverimg)";
+							break;
+						case "DeploymentLayer":
+							this.style.fill = "url(#deplimg)";
+							break;
+						case "Artefakt":
+							this.style.fill = "url(#artimg)";
+							break;
+						case "Anwendung":
+							this.style.fill = "url(#anwimg)";
+							break;
+						case "Special":
+							switch(d.kategorie) {
+								case "Loadbalancer":
+									this.style.fill = "url(#lbimg)"; //url(#image)
+									break;
+								case "Firewall":
+									this.style.fill = "url(#fwimg)"; //url(#image)
+									break;
+								case "Proxy":
+									this.style.fill = "url(#proxyimg)"; //url(#image)
+									break;
+							}
+							break;
+						default:
+							//can't happen
+						}
+						return (d);
+					}
+				})
+				//.style('fill', nodeFill)
+
+
+		 // Now that we have our main selections (edges and
+		// nodes), we can create some subsets of those
+		// selections that will be helpful. Those subsets
+		// will be tied to individual nodes, so we'll
+		// start by iterating through them. We do that
+		// in two separate passes.
+
+		nodeSelection.each(function(node){
+
+			// First let's identify all edges that are
+			// incident to the node. We collect those as
+			// a D3 selection so we can manipulate the
+			// set easily with D3 utilities.
+
+			node.incidentEdgeSelection = edgeSelection
+				.filter(function(edge) {
+					return nodes[edge.source] === node ||
+						   nodes[edge.target] === node;
+				});
+		});
+
+		// Now make a second pass through the nodes.
+
+		nodeSelection.each(function(node){
+
+			// For this pass we want to find all adjacencies.
+			// An adjacent node shares an edge with the
+			// current node.
+
+			node.adjacentNodeSelection = nodeSelection
+				.filter(function(otherNode){
+
+					// Presume that the nodes are not adjacent.
+					var isAdjacent = false;
+
+					// We can't be adjacent to ourselves.
+
+					if (otherNode !== node) {
+
+						// Look the incident edges of both nodes to
+						// see if there are any in common.
+
+						node.incidentEdgeSelection.each(function(edge){
+							otherNode.incidentEdgeSelection.each(function(otherEdge){
+								if (edge === otherEdge) {
+									isAdjacent = true;
+								}
+							});
+						});
+
+					}
+
+					return isAdjacent;
+				});
+
+		});
+
+		// Next we create a array for the node labels.
+		// We're going to use a "hidden" force layout to
+		// position the labels so they don't overlap
+		// each other. ("Hidden" because the links won't
+		// be visible.)
+
+		//NOW global for adding notes later ???
+		if(clear_labels == true)
+			labels = [];
+		var labelLinks = [];
+
+		nodes.forEach(function(node, idx){
+
+			// For each node on the graph we create
+			// two pseudo-nodes for its label. Once
+			// pseudo-node will be anchored to the
+			// center of the real node, while the
+			// second will be linked to that node.
+
+			// Add the pseudo-nodes to their array.
+
+			labels.push({node: node});
+			labels.push({node: node});
+
+			// And create a link between them.
+
+			labelLinks.push({
+				source: idx * 2,
+				target: idx * 2 + 1
+			});
+		});
+
+		// Construct the selections for the label layout.
+
+		// There's no need to add any markup for the
+		// pseudo-links between the label nodes, but
+		// we do need a selection so we can run the
+		// force layout.
+
+		var labelLinkSelection = svg.selectAll('line.labelLink')
+			.data(labelLinks);
+
+		// The label pseud-nodes themselves are just
+		// `<g>` containers.
+
+		var labelSelection = svg.selectAll('g.labelNode')
+			.data(labels)
+			.enter()
+			.append('g')
+				.classed('labelNode',true);
+
+		// Now add the text itself. Of the paired
+		// pseudo-nodes, only odd ones get the text
+		// elements.
+
+		labelSelection.append('text')
+			.text(function(d, i) {
+				return i % 2 == 0 ? '' : d.node.title;
+			})
+			.attr('data-node-index', function(d, i){
+				return i % 2 == 0 ? 'none' : Math.floor(i/2);
+			});
+
+		// The last bit of markup are the lists of
+		// connections for each link.
+
+		var connectionSelection = graphContainer.selectAll('ul.connection')
+			.data(edges)
+			.enter()
+			.append('ul')
+			.classed('connection hidden', true)
+			.attr('data-edge-index', function(d,i) {return i;});
+
+		connectionSelection.each(function(connection){
+
+			var selection = d3.select(this);
+			connection.links.forEach(function(link){
+				selection.append('li')
+					.text(link); //edge kanten tooltip
+					//alert(labelLinks)#
+				var btn_del_edge = selection.append('button').attr('class', 'btn btn-danger').attr('title', 'Kante Löschen');
+				btn_del_edge.append('span').attr('class', 'glyphicon glyphicon-remove');
+
+			})
+		})
+
+		// Create the main force layout.
+
+		force
+			.size([width, height])
+			.nodes(nodes)
+			.links(edges)
+			.linkDistance(linkDistance)
+			.charge(-500);
+
+
+
+		// Create the force layout for the labels.
+
+		labelForce = d3.layout.force()
+			.size([width, height])
+			.nodes(labels)
+			.links(labelLinks)
+			.gravity(0)
+			.linkDistance(0)
+			.linkStrength(0.8)
+			.charge(-30);
+
+		// Let users drag the nodes.
+
+		nodeSelection.call(force.drag);
+
+		// Function to handle clicks on node elements
+
+		var nodeClicked = function(node) {
+
+			// Ignore events based on dragging.
+
+			if (d3.event.defaultPrevented) return;
+
+			// Remember whether or not the clicked
+			// node is currently selected.
+
+			var selected = node.selected;
+
+			// Keep track of the desired text color.
+
+			var fillColor;
+
+			// In all cases we start by resetting
+			// all the nodes and edges to their
+			// de-selected state. We may override
+			// this transition for some nodes and
+			// edges later.
+
+			nodeSelection
+				.each(function(node) { node.selected = false; })
+				.selectAll('circle')
+					.transition()
+					.attr('r', nodeRadius)
+					.attr({nodeStatus:
+						function(d) {
+							switch(d.label) {
+							case "Hardware":
+								this.style.fill = "url(#hwimg)"; //url(#image)
+								break;
+							case "Server":
+								this.style.fill = "url(#serverimg)";
+								break;
+							case "DeploymentLayer":
+								this.style.fill = "url(#deplimg)";
+								break;
+							case "Artefakt":
+								this.style.fill = "url(#artimg)";
+								break;
+							case "Anwendung":
+								this.style.fill = "url(#anwimg)";
+								break;
+							case "Special":
+								switch(d.kategorie) {
+								case "Loadbalancer":
+									this.style.fill = "url(#lbimg)"; //url(#image)
+									break;
+								case "Firewall":
+									this.style.fill = "url(#fwimg)"; //url(#image)
+									break;
+								case "Proxy":
+									this.style.fill = "url(#proxyimg)"; //url(#image)
+									break;
+							}
+								break;
+							default:
+								//can't happen
+							}
+							return (d);
+						}
+					})
+				//	.style('fill', nodeFill);
+
+			edgeSelection
+				.transition()
+				.attr({edgeStatus:
+					function(d) {
+						switch(d.links[0]) {
+						case "requires": //TODO auf Artefaktbeziehung anpassen
+							this.style.stroke = 'red';
+							break;
+						case "uses": //TODO auf Artefaktbeziehung anpassen
+							this.style.stroke = 'pink';
+							break;
+						case "communicates_with": //TODO auf Artefaktbeziehung anpassen
+							this.style.stroke = 'orange';
+							break;
+						default:
+							this.style.stroke = edgeStroke;
+						}
+						return (d);
+					}
+				});
+
+			labelSelection
+				.transition()
+				.style('opacity', 0);
+
+			// Now see if the node wasn't previously selected.
+
+			if (!selected) {
+
+				// This node wasn't selected before, so
+				// we want to select it now. That means
+				// changing the styles of some of the
+				// elements in the graph.
+
+				// First we transition the incident edges.
+
+				node.incidentEdgeSelection
+					.transition()
+					.attr({edgeStatus:
+					function(d) {
+						switch(d.links[0]) {
+						case "requires": //TODO auf Artefaktbeziehung anpassen
+							this.style.stroke = 'red';
+							break;
+						case "uses": //TODO auf Artefaktbeziehung anpassen
+							this.style.stroke = 'pink';
+							break;
+						case "communicates_with": //TODO auf Artefaktbeziehung anpassen
+							this.style.stroke = 'orange';
+							break;
+						default:
+							this.style.stroke = edgeStroke;
+						}
+						return (d);
+					}
+				});
+
+				// Now we transition the adjacent nodes.
+
+				node.adjacentNodeSelection.selectAll('circle')
+					.transition()
+					.attr('r', nodeRadius)
+					.style('fill', node.color);
+
+				labelSelection
+					.filter(function(label) {
+						var adjacent = false;
+						node.adjacentNodeSelection.each(function(d){
+							if (label.node === d) {
+								adjacent = true;
+							}
+						})
+						return adjacent;
+					})
+					.transition()
+					.style('opacity', 1)
+					.selectAll('text')
+						.style('fill', adjLabelFill);
+
+				// And finally, transition the node itself.
+
+				d3.selectAll('circle[data-node-index="'+node.index+'"]')
+					.transition()
+					.attr('r', selectedNodeRadius)
+					.style('fill', node.color);
+
+				// Make sure the node's label is visible
+
+				labelSelection
+					.filter(function(label) {return label.node === node;})
+					.transition()
+					.style('opacity', 1);
+
+				// And note the desired color for bundling with
+				// the transition of the label position.
+
+				fillColor = node.text;
+
+				// Delete the current notes section to prepare
+				// for new information.
+
+				notes.selectAll('*').remove();
+
+				// Fill in the notes section with informationm
+				// from the node. Because we want to transition
+				// this to match the transitions on the graph,
+				// we first set it's opacity to 0.
+
+				notes.style({'opacity': 0});
+
+				// Now add the notes content.
+
+				notes.append('input').attr('type', 'text').attr('id', 'title_app').attr('value', node.title);
+			//	if (node.url && node.image) {
+
+			//	}
+				var list = notes.append('ul');
+				switch(node.label) {
+					case "Hardware":
+						notes.append('div')
+							.classed('artwork',true)
+							.append('img')
+								.attr('src', 'img/hw.png');
+						list.append('li')
+							.text("Typ: Hardware");
+						break;
+					case "Server":
+						notes.append('div')
+							.classed('artwork',true)
+							.append('img')
+								.attr('src', 'img/server.png');
+						list.append('li')
+							.text("Typ: Server");
+						list.append('li')
+							.text("OS: ");
+						list.append('input').attr('type', 'text').attr('id', 'os_app').attr('value', node.os);
+						list.append('li')
+							.text("Zone: ");
+						list.append('input').attr('type', 'text').attr('id', 'zone_app').attr('value', node.zone);
+						break;
+					case "DeploymentLayer":
+						notes.append('div')
+							.classed('artwork',true)
+							.append('img')
+								.attr('src', 'img/deployment.png');
+						list.append('li')
+							.text("Typ: DeploymentLayer");
+						list.append('li')
+							.text("RTE: ");
+						list.append('input').attr('type', 'text').attr('id', 'rte_app').attr('value', node.rte);
+						list.append('li')
+							.text("Port: ");
+						list.append('input').attr('type', 'text').attr('id', 'port_app').attr('value', node.port);
+						break;
+					case "Artefakt":
+						notes.append('div')
+							.classed('artwork',true)
+							.append('img')
+								.attr('src', 'img/artefakt.png');
+						list.append('li')
+							.text("Typ: Artefakt");
+						list.append('li')
+							.text("Lizenz: ");
+						list.append('input').attr('type', 'text').attr('id', 'lizenz_app').attr('value', node.lizenz);
+						list.append('li')
+							.text("Sonstiges: ");
+						list.append('input').attr('type', 'text').attr('id', 'sonst_app').attr('value', node.sonstiges);
+						break;
+					case "Anwendung":
+						notes.append('div')
+							.classed('artwork',true)
+							.append('img')
+								.attr('src', 'img/anwendung.png');
+						list.append('li')
+							.text("Typ: Anwendung");
+						break;
+					case "Special":
+						var imglink;
+						switch(node.kategorie) {
+							case "Loadbalancer":
+								imglink = 'img/lb.png';
+							break;
+							case "Firewall":
+								imglink = 'img/firewall.png';
+							break;
+							case "Proxy":
+								imglink = 'img/proxy.png';
+							break;
+						}
+
+						notes.append('div')
+							.classed('artwork',true)
+							.append('img')
+								.attr('src', imglink);
+						list.append('li')
+							.text("Typ: "+node.kategorie);
+						list.append('input').attr('type', 'hidden').attr('id', 'kategorie_app').attr('value', node.kategorie);
+						break;
+				default:
+					//can't happen
+				}
+
+				/*
+				//for deleting without reloading
+				for(var i = 0; i < node.incidentEdgeSelection[0].length; i++)
+				{
+					svg_edges[i] = node.incidentEdgeSelection[0][i]; //filling the global value for possible deleting
+				}
+				*/
+
+
+
+				//node.incidentEdgeSelection[0][0].remove();
+
+
+
+				//d3.selectAll('text[data-node-index="'+0+'"]').remove();
+
+
+
+				list.append('li');
+				var btn1 = list.append('button').attr('class', 'btn btn-success').attr('onclick', 'saveclickedCI("'+node.id+'", "'+node.label+'")').attr('title', 'Knotenänderungen speichern');
+				var btn2 = list.append('button').attr('class', 'btn btn-danger').attr('onclick', 'deleteclickedCI("'+node.id+'", "'+node.index+'")').attr('title', 'Knoten löschen');
+
+
+
+				btn1.append('span').attr('class', 'glyphicon glyphicon-edit');
+				btn2.append('span').attr('class', 'glyphicon glyphicon-remove');
+
+
+				// With the content in place, transition
+				// the opacity to make it visible.
+
+				notes.transition().style({'opacity': 1});
+
+
+				console.log(node);
+
+				anyNodeSelected = true; //global for canvas clicks
+
+			} else { //resuming
+
+				anyNodeSelected = false; //global for canvas clicks
+
+				// Since we're de-selecting the current
+				// node, transition the notes section
+				// and then remove it.
+
+				notes.transition()
+					.style({'opacity': 0})
+					.each('end', function(){
+						notes.selectAll('*').remove();
+					});
+
+				// Transition all the labels to their
+				// default styles.
+
+				labelSelection
+					.transition()
+					.style('opacity', 1)
+					.selectAll('text')
+						.style('fill', labelFill);
+
+				// The fill color for the current node's
+				// label must also be bundled with its
+				// position transition.
+
+				fillColor = labelFill;
+			}
+
+			// Toggle the selection state for the node.
+
+			node.selected = !selected;
+
+			// Update the position of the label text.
+
+			var text = d3.select('text[data-node-index="'+node.index+'"]').node();
+			var label = null;
+			labelSelection.each(function(d){
+				if (d.node === node) { label = d; }
+			})
+
+			if (text && label) {
+				positionLabelText(text, label, fillColor);
+			}
+
+		};
+
+		// Function to handle click on edges.
+
+		var edgeClicked = function(edge, idx) {
+
+			// Remember the current selection state of the edge.
+
+			var selected = edge.selected;
+
+			// Transition all connections to hidden. If the
+			// current edge needs to be displayed, it's transition
+			// will be overridden shortly.
+
+			connectionSelection
+				.each(function(edge) { edge.selected = false; })
+				.transition()
+				.style('opacity', 0)
+				.each('end', function(){
+					d3.select(this).classed('hidden', true);
+				});
+
+			// If the current edge wasn't selected before, we
+			// want to transition it to the selected state now.
+
+			if (!selected) {
+
+			/*
+			//for deleting without reloading
+			for(var i = 0; i < edge.source.incidentEdgeSelection[0].length; i++)
+			{
+				for(var j = 0; j < edge.source.incidentEdgeSelection[0].length; j++)
+				{
+					if(edge.source.incidentEdgeSelection[0][i] == edge.target.incidentEdgeSelection[0][j])
+					{
+						selected_svg_edge = edge.source.incidentEdgeSelection[0][i];
+					}
+				}
+			}
+			*/
+
+			console.log(edge);
+
+
+
+				d3.select('ul.connection[data-edge-index="'+idx+'"]')
+					.classed('hidden', false)
+					.style('opacity', 0)
+					.transition()
+					.style('opacity', 1)
+					.attr('onclick', 'delete_selected_edge("'+edge.source.id+'", "'+edge.target.id+'", "'+edge.links[0]+'")');
+			}
+
+			// Toggle the resulting selection state for the edge.
+
+			edge.selected = !selected;
+
+		};
+
+		// Handle clicks on the nodes.
+
+		nodeSelection.on('click', nodeClicked);
+
+		labelSelection.on('click', function(pseudonode) {
+			nodeClicked(pseudonode.node);
+		});
+
+		// Handle clicks on the edges.
+
+		edgeSelection.on('click', edgeClicked);
+		connectionSelection.on('click', edgeClicked);
+
+
+		  // force feed algo ticks for coordinate computation
+		 force.on('tick', function() {
+
+			// Constrain all the nodes to remain in the
+			// graph container.
+
+			nodeSelection.each(function(node) {
+				node.x = Math.max(node.x, 2*selectedNodeRadius);
+				node.y = Math.max(node.y, 2*selectedNodeRadius);
+				node.x = Math.min(node.x, width-2*selectedNodeRadius);
+				node.y = Math.min(node.y, height-2*selectedNodeRadius);
+			});
+
+			// Kick the label layout to make sure it doesn't
+			// finish while the main layout is still running.
+
+			labelForce.start();
+
+			// Calculate the positions of the label nodes.
+
+			labelSelection.each(function(label, idx) {
+
+				// Label pseudo-nodes come in pairs. We
+				// treat odd and even nodes differently.
+
+				if(idx % 2) {
+
+					// Odd pseudo-nodes have the actual text.
+					// That text needs a real position. The
+					// pseudo-node itself we leave to the
+					// force layout to position.
+
+					positionLabelText(this.childNodes[0], label);
+
+				} else {
+
+					// Even pseudo-nodes (which have no text)
+					// are fixed to the center of the
+					// corresponding real node. This will
+					// override the position calculated by
+					// the force layout.
+
+
+					label.x = label.node.x;
+					label.y = label.node.y;
+
+
+				}
+			});
+
+			// Calculate the position for the connection lists.
+
+			connectionSelection.each(function(connection){
+				var x = (connection.source.x + connection.target.x)/2 - 27;
+				var y = (connection.source.y + connection.target.y)/2;
+				d3.select(this)
+					.style({
+						'top':  y + 'px',
+						'left': x + 'px'
+					});
+			});
+
+			// Update the posistions of the nodes and edges.
+
+			nodeSelection.call(positionNode);
+			labelSelection.call(positionNode);
+			edgeSelection.call(positionEdge);
+			labelLinkSelection.call(positionEdge);
+
+		});
+		// Start the layout computations.
+		force.start();
+		labelForce.start();
+
+		start_stop_drag() //feels better
+	}
+
+//when click the deletebutton on a node
+function deleteclickedCI(node_id, node_index){
+
+	if (confirm('Wirklich löschen (alle angrenzenden Kanten werden mitgelöscht, angrenzende Knoten verbleiben)?')) {
+
+
+		/*
+		d3.selectAll('circle[data-node-index="'+node_index+'"]').remove();
+
+		d3.selectAll('text[data-node-index="'+node_index+'"]').text("");
+
+
+		for(var i = 0; i < svg_edges.length; i++)
+		{
+			svg_edges[i].remove();
+		}
+
+
+		svg.selectAll('g.labelNode')
+			.style('opacity', 1);
+
+		*/
+
+
+			//actual delet in db
+			$.ajax({
+			type: "POST",
+			url: "save_deletedCI_in_db.php",
+			data: { id: node_id},
+			 success : function(text)
+			 {
+				 response = text;
+			 }
+			}).done(function( ) {
+				alert("Löschen erfolgreich.");
+
+				reloadSVG();
+				fillAnwendungsbox();
+
+			});
+
+
+	} else {
+		// Do nothing!
+	}
+
+
+}
+
+//bearbeitungsmodus  (grüner button)
+function saveclickedCI(node_id, node_type){
+
+	elementList = [];
+
+	var title_name = document.getElementById("title_app").value.trim();
+	elementList.push(title_name);
+
+
+	switch(node_type) {
+	case "Anwendung":
+		//nothing except title
+		break;
+	case "Artefakt":
+		var newArtLizenz = document.getElementById("lizenz_app").value.trim();
+		var newArtSonstiges = document.getElementById("sonst_app").value.trim();
+		elementList.push(newArtLizenz);
+		elementList.push(newArtSonstiges);
+		break;
+	case "DeploymentLayer":
+		var newDepRTE = document.getElementById("rte_app").value.trim();
+		var newDepPort = document.getElementById("port_app").value.trim();
+		elementList.push(newDepRTE);
+		elementList.push(newDepPort);
+		break;
+	case "Server":
+		var newSerZone = document.getElementById("zone_app").value.trim();
+		var newSerOS = document.getElementById("os_app").value.trim();
+		elementList.push(newSerZone);
+		elementList.push(newSerOS);
+		break;
+	case "Hardware":
+		//nothing except title
+		break;
+	case "Special":
+		var kategorie = document.getElementById("kategorie_app").value.trim(); //lb, fw, proxy
+		elementList.push(kategorie);
+		break;
+	}
+
+	$.ajax({
+		type: "POST",
+		url: "save_changedCI_in_db.php",
+		data: { type: node_type, elements: elementList, id: node_id},
+	 success : function(text)
+	 {
+		 response = text;
+	 }
+	}).done(function( ) {
+		alert(response);
+		reloadSVG();
+	});
+
+}
+
+//when rightclicking and adding tempnode
+function addnewNodeToDB(ci_name, ci_typ, special_information)
+{
+	elementList = [];
+	elementList.push(ci_name);
+
+	if(special_information != null) //fallunterscheidung lb, fw, proxy fürs backend
+		elementList.push(special_information);
+
+	$.ajax({
+	type: "POST",
+	url: "save_changedCI_in_db.php",
+	data: { type: ci_typ, elements: elementList, id: ""}, //id is actually not "" but it helps to filter out if it was just created, better dont use actual ID cause of the deleteLastNode-Bug
+	 success : function(text)
+	 {
+		 response = text;
+	 }
+	}).done(function() {
+		//alert(response);
+	});
+}
+
+function drawEdgeInDB(src, target, kantenbeschriftung)
+{
+	//TODO think about deploymentlayer that cant be differentiated
+
+
+	$.ajax({
+	type: "POST",
+	url: "save_newEdge_in_db.php",
+	data: { src: src, target: target, kante: kantenbeschriftung},
+	 success : function(text)
+	 {
+		 response = text;
+	 }
+	}).done(function( ) {
+		//alert(response)
+	});
+}
+
+function delete_selected_edge(src, target, kantenbeschriftung)
+{
+	if (confirm('Kante wirklich unwiederruflich löschen?')) {
+
+		/*
+		selected_svg_edge.remove();
+
+
+		for(var i = 0; i<links.length; i++)
+		{
+			if(links.source == src && links.target == target)
+			{
+				links = links.slice(0,i).concat( links.slice(i+1) );
+			}
+		}
+
+		*/
+
+		$.ajax({
+		type: "POST",
+		url: "save_deletedEdge_in_db.php",
+		data: { src: src, target: target, kante: kantenbeschriftung},
+		 success : function(text)
+		 {
+			 response = text;
+		 }
+		}).done(function( ) {
+			//alert(response)
+			reloadSVG();
+		});
+
+	}
+}
+
+function synch_with_other_filter(){
+	document.getElementById('sel_filter').selectedIndex = document.getElementById('sel1').selectedIndex;
+}
+
+function reloadSVG()
+{
+	var show_anw;
+	var anw_sel1_val;
+	var show_art;
+	var show_dep;
+	var show_ser;
+	var show_hw;
+	var show_special;
+
+	document.getElementById('sel1').value == "--" ? anw_sel1_val = null : anw_sel1_val = document.getElementById('sel1').value;
+	document.getElementById("Anw_checkbox").checked == true ? show_anw = "n.type='Anwendung'" : show_anw = false;
+	document.getElementById('Art_checkbox').checked == true ? show_art = "n.type='Artefakt'" : show_art = false;
+	document.getElementById('Dep_checkbox').checked == true ? show_dep = "n.type='DeploymentLayer'" : show_dep = false;
+	document.getElementById('Ser_checkbox').checked == true ? show_ser = "n.type='Server'" : show_ser = false;
+	document.getElementById('HW_checkbox').checked == true ? show_hw = "n.type='Hardware'" : show_hw = false;
+	document.getElementById('Special_checkbox').checked == true ? show_special = "n.type='Special'" : show_special = false;
+
+	force.stop();
+	labelForce.stop();
+	svg.selectAll("*").remove();
+	d3.select("#graph").remove();
+	d3.select("#notes").remove();
+	var my_tempParent = $('#container_for_graph');
+	my_tempParent.append( "<div id='waiting'>getting Data from the database...</div>" );//TODO: see if other request also take long
+	my_tempParent.append( "<div id='graph'></div>" );
+	my_tempParent.append( "<div id='notes'></div>" );
+	labels = [];
+	getDataFromNeo4J(show_anw, show_art, show_dep, show_ser, show_hw, show_special, anw_sel1_val, null, null); //anwe, art, dep, ser, hw, ValueOfSelectbox, CI-Search, Wirkkette
+
+}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>IT-Infrastructure Visualisator</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="lib/css/bootstrap.min.css" rel="stylesheet">
+	
+	  <!-- jQuery Version 3.11.1 -->
+    <script src="lib/js/jquery.js"></script>
+	
+	 <!-- Bootstrap Core JavaScript -->
+    <script src="lib/js/bootstrap.min.js"></script>
+	
+	<!--Dropdowns with images http://www.marghoobsuleman.com/jquery-image-dropdown-->
+	<script src="lib/js/ms_dropdownJquery.js" type="text/javascript"></script>
+	<link rel="stylesheet" type="text/css" href="lib/css/ms_dropdown.css" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/edit_ci.css">
+	
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Graph anzeigen</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="add_ci.html">CI hinzufügen</a>
+                    </li>
+                    <li>
+                        <a href="connect_ci.html">CI verknüpfen</a>
+                    </li>
+                    <li>
+                        <a href="delete_ci.html">CI löschen</a>
+                    </li>
+					<li>
+                        <a href="edit_ci.html">CI bearbeiten</a>
+                    </li>
+					
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container"> 
+	<div id="container_for_newBoxes">
+				<div class="well text-left">
+					<h4>CI bearbeiten</h4>
+					<div class="form-group">
+						<select id="payments" name="payments" style="width:500px;" onchange="type_selected(this.value)">
+							<option value="" data-description="Bitte wählen Sie den gewünschten Typ">Typ wählen</option>
+							<option value="anw" data-image="img/min/anwendung_min.png" data-description="Attribute: Name">Anwendungen</option>
+							<option value="art" data-image="img/min/artefakt_min.png" data-description="Attribute: Name, Lizenz, Sonstiges">Artefakte</option>
+							<option value="dep" data-image="img/min/deployment_min.png" data-description="Attribute: DeploymentLayer, RTE, Port">Deployment-Layer</option>
+							<option value="ser" data-image="img/min/server_min.png" data-description="Attribute: Name, OS, Zone">Server</option>
+							<option value="hw" data-image="img/min/hw_min.png" data-description="Attribute: Name">Hardware</option>
+						</select>
+					</div>
+				</div>
+				<div class="well text-left anwendungscontainer">
+					<h4>zu bearbeitende Anwendung</h4>
+						<div id="custom-search-input">
+							<div class="input-group col-md-12">
+								<input type="text" class="search-query form-control" placeholder="Name eingeben" />
+								<span class="input-group-btn">
+									<button class="btn btn-success" type="button" onclick="search('Anwendung', this)">
+										<span class=" glyphicon glyphicon-search"></span>
+									</button>
+								</span>
+							</div>
+						</div>		
+				</div>		
+				<div class="well text-left artefaktcontainer">
+					<h4>zu bearbeitendes Artefakt</h4>
+						<div id="custom-search-input">
+							<div class="input-group col-md-12">
+								<input type="text" class="search-query form-control" placeholder="Name eingeben" />
+								<span class="input-group-btn">
+									<button class="btn btn-success" type="button" onclick="search('Artefakt', this)">
+										<span class=" glyphicon glyphicon-search"></span>
+									</button>
+								</span>
+							</div>
+						</div>		
+				</div>	
+				<div class="well text-left deploymentcontainer">
+					<h4>zu bearbeitendes Deployment-Layer</h4>
+						<div id="custom-search-input">
+							<div class="input-group col-md-12">
+								<label>Artefaktname:</label>
+								<input type="text" class="search-query form-control" id="depArt" placeholder="Name eingeben" />
+								<span class="input-group-btn"></span>
+								<label>Servername:</label>
+								<input type="text" class="search-query form-control" id="depSer" placeholder="Name eingeben" />
+								<span class="input-group-btn"></span>
+							</div>
+							</br></br>
+							<button class="btn btn-success" type="button" onclick="search('Deployment', this)">
+										Search&nbsp;&nbsp;&nbsp;<span class=" glyphicon glyphicon-search"></span>
+							</button>
+						</div>					
+				</div>	
+				<div class="well text-left servercontainer">
+					<h4>zu bearbeitender Server</h4>
+						<div id="custom-search-input">
+							<div class="input-group col-md-12">
+								<input type="text" class="search-query form-control" placeholder="Name eingeben" />
+								<span class="input-group-btn">
+									<button class="btn btn-success" type="button" onclick="search('Server', this)">
+										<span class=" glyphicon glyphicon-search"></span>
+									</button>
+								</span>
+							</div>
+						</div>		
+				</div>	
+				<div class="well text-left hardwarecontainer">
+					<h4>zu bearbeitende Hardware</h4>
+						<div id="custom-search-input">
+							<div class="input-group col-md-12">
+								<input type="text" class="search-query form-control" placeholder="Name eingeben" />
+								<span class="input-group-btn">
+									<button class="btn btn-success" type="button" onclick="search('Hardware', this)">
+										<span class=" glyphicon glyphicon-search"></span>
+									</button>
+								</span>
+							</div>
+						</div>		
+				</div>
+		</div>				
+    </div>
+    <!-- /.container -->
+
+	
+	<script type="text/javascript">
+	
+	$( ".anwendungscontainer" ).hide();
+	$( ".artefaktcontainer" ).hide();
+	$( ".deploymentcontainer" ).hide();
+	$( ".servercontainer" ).hide();
+	$( ".hardwarecontainer" ).hide();
+	
+	//init selectbox with images	
+	$(document).ready(function(e) {
+		try {
+		$("body select").msDropDown();
+		} catch(e) {
+		alert(e.message);
+		}
+	});
+	
+	//when the user selects the type in the dropdown-select	
+	function type_selected(selected_type)
+	{
+		switch(selected_type) {
+		case "anw":
+			$( ".anwendungscontainer" ).show();
+			$( ".artefaktcontainer" ).hide();
+			$( ".deploymentcontainer" ).hide();
+			$( ".servercontainer" ).hide();
+			$( ".hardwarecontainer" ).hide();
+			break;
+		case "art":
+			$( ".anwendungscontainer" ).hide();
+			$( ".artefaktcontainer" ).show();
+			$( ".deploymentcontainer" ).hide();
+			$( ".servercontainer" ).hide();
+			$( ".hardwarecontainer" ).hide();
+			break;
+		case "dep":
+			$( ".anwendungscontainer" ).hide();
+			$( ".artefaktcontainer" ).hide();
+			$( ".deploymentcontainer" ).show();
+			$( ".servercontainer" ).hide();
+			$( ".hardwarecontainer" ).hide();
+			break;
+		case "ser":
+			$( ".anwendungscontainer" ).hide();
+			$( ".artefaktcontainer" ).hide();
+			$( ".deploymentcontainer" ).hide();
+			$( ".servercontainer" ).show();
+			$( ".hardwarecontainer" ).hide();
+			break;
+		case "hw":
+			$( ".anwendungscontainer" ).hide();
+			$( ".artefaktcontainer" ).hide();
+			$( ".deploymentcontainer" ).hide();
+			$( ".servercontainer" ).hide();
+			$( ".hardwarecontainer" ).show();
+			break;
+		default:
+			//title selected
+			$( ".anwendungscontainer" ).hide();
+			$( ".artefaktcontainer" ).hide();
+			$( ".deploymentcontainer" ).hide();
+			$( ".servercontainer" ).hide();
+			$( ".hardwarecontainer" ).hide();			
+		}
+	}
+	
+	function search(type_, elem){
+	var current_type = type_;
+	var current_input = $(elem ).parent().prev().val();
+	var current_prop = "name";
+	
+	//Sonderfall Deployment
+	if(current_type == "Deployment")
+	{
+		current_input = $('#depArt').val() + "|" + $('#depSer').val();
+	}
+
+	
+		$.ajax({
+			type: "POST",
+			url: "search_singleCI.php",
+			data: { type: current_type, query: current_input, prop: current_prop},
+         success : function(text)
+         {
+             response = text;
+         }
+		}).done(function( ) {
+			if(response == "[]"){
+				alert("Keine Einträge zu "+current_input+" vorhanden!")	
+			}
+			else{
+			
+			var erg = jQuery.parseJSON(response);
+			
+				switch(current_type) {
+				case "Anwendung":
+					var AnwendungsMaske = $(''+
+						'	<div class="well text-left anwendungscontainer2">'+
+						'		<h4>gewählte Anwendung: <span class="selectedHeader"> '+erg[0]+'</span></h4>'+
+						'		<span class="form-group">'+
+						'			<label class="control-label" for="anw_name">Name:</label>'+
+						'			<input type="text" class="form-control" name="anw_name" value="'+erg[0]+'">'+
+						'		</span>'+
+						'		</br>'+
+						'		<button class="btn btn-success" type="button" onclick="saveChangesInDB(\'Anwendung\', this, '+erg[1]+')">'+
+						'			Ändern&nbsp;&nbsp;&nbsp;<span class=" glyphicon glyphicon-edit"></span>'+
+						'		</button>		'+	
+						'		<button class="btn btn-danger" type="button" onclick="discard(this)">'+
+						'			Verwerfen&nbsp;&nbsp;&nbsp;<span class=" glyphicon glyphicon-remove"></span>'+
+						'		</button>		'+	
+						'	</div>	'+		
+						'');
+						$('#container_for_newBoxes').append(AnwendungsMaske); // put it into the DOM 
+					break;
+				case "Artefakt":
+					var ArtefaktMaske = $(''+
+						'<div class="well text-left artefaktcontainer2">'+
+						'	<h4>gewähltes Artefakt: <span class="selectedHeader">'+erg[0]+'</span></h4>'+
+						'	<span class="form-group">'+
+						'		<label class="control-label" for="art_name">Name:</label>'+
+						'		<input type="text" class="form-control" name="art_name" value="'+erg[0]+'">'+
+						'	</span>'+
+						'	<span class="form-group">'+
+						'		<label class="control-label" for="art_lizenz">Lizenz:</label>'+
+						'		<input type="text" class="form-control" name="art_lizenz" value="'+erg[1]+'">'+
+						'	</span>'+
+						'	<span class="form-group">'+
+						'		<label class="control-label" for="art_sonstiges">Sonstiges:</label>'+
+						'		<input type="text" class="form-control" name="art_sonstiges" value="'+erg[2]+'">'+
+						'	</span>'+
+						'	</br>'+
+						'	<button class="btn btn-success" type="button" onclick="saveChangesInDB(\'Artefakt\', this, '+erg[3]+')">'+
+						'		Ändern&nbsp;&nbsp;&nbsp;<span class=" glyphicon glyphicon-edit"></span>'+
+						'	</button>		'+
+						'	<button class="btn btn-danger" type="button" onclick="discard(this)">'+
+						'		Verwerfen&nbsp;&nbsp;&nbsp;<span class=" glyphicon glyphicon-remove"></span>'+
+						'	</button>	'+		
+						'</div>'+
+						'');
+						$('#container_for_newBoxes').append(ArtefaktMaske); // put it into the DOM 
+					break;
+				case "Deployment":
+					var DeploymentMaske = $(''+
+						'<div class="well text-left deployment_container2">'+
+						'	<h4>gewähltes Deployment-Layer: <span class="selectedHeader">"'+erg[3]+'"</span></h4>'+
+						'	<span class="form-group">'+
+						'		<label class="control-label" for="dep_name">Deployment-Layer:</label>'+
+						'		<input type="text" class="form-control" name="dep_name" value="'+erg[0]+'">'+
+						'	</span>'+
+						'	<span class="form-group">'+
+						'		<label class="control-label" for="dep_rte">RTE:</label>'+
+						'		<input type="text" class="form-control" name="dep_rte" value="'+erg[2]+'">'+
+						'	</span>'+
+						'	<span class="form-group">'+
+						'		<label class="control-label" for="dep_port">Port:</label>'+
+						'		<input type="text" class="form-control" name="dep_port" value="'+erg[1]+'">'+
+						'	</span>'+
+						'	</br>'+
+						'	<button class="btn btn-success" onclick="saveChangesInDB(\'Deployment\', this, '+erg[4]+')">'+
+						'		Ändern&nbsp;&nbsp;&nbsp;<span class=" glyphicon glyphicon-edit"></span>'+
+						'	</button>'+
+						'	<button class="btn btn-danger" type="button" onclick="discard(this)">'+
+						'		Verwerfen&nbsp;&nbsp;&nbsp;<span class=" glyphicon glyphicon-remove"></span>'+
+						'	</button>'+		
+						'</div>'+
+						'');
+						$('#container_for_newBoxes').append(DeploymentMaske); // put it into the DOM
+					break;
+				case "Server":
+					var ServerMaske = $(''+
+						'<div class="well text-left servercontainer2">'+
+						'	<h4>gewählter Server: <span class="selectedHeader">'+erg[0]+'</span></h4>'+
+						'	<span class="form-group">'+
+						'		<label class="control-label" for="ser_name">Name:</label>'+
+						'		<input type="text" class="form-control" name="ser_name" value="'+erg[0]+'">'+
+						'	</span>'+
+						'	<span class="form-group">'+
+						'		<label class="control-label" for="ser_zone">Zone:</label>'+
+						'		<input type="text" class="form-control" name="ser_zone" value="'+erg[1]+'">'+
+						'	</span>'+
+						'	<span class="form-group">'+
+						'		<label class="control-label" for="ser_os">Sonstiges:</label>'+
+						'		<input type="text" class="form-control" name="ser_os" value="'+erg[2]+'">'+
+						'	</span>'+
+						'	</br>'+
+						'	<button class="btn btn-success" onclick="saveChangesInDB(\'Server\', this, '+erg[3]+')">'+
+						'		Ändern&nbsp;&nbsp;&nbsp;<span class=" glyphicon glyphicon-edit"></span>'+
+						'	</button>		'+
+						'	<button class="btn btn-danger" type="button" onclick="discard(this)">'+
+						'		Verwerfen&nbsp;&nbsp;&nbsp;<span class=" glyphicon glyphicon-remove"></span>'+
+						'	</button>	'+		
+						'</div>'+
+						'');
+						$('#container_for_newBoxes').append(ServerMaske); // put it into the DOM 
+					break;
+				case "Hardware":
+					var HardwareMaske = $(''+
+						'	<div class="well text-left hardwarecontainer2">'+
+						'		<h4>gewählte Hardware: <span class="selectedHeader"> '+erg[0]+'</span></h4>'+
+						'		<span class="form-group">'+
+						'			<label class="control-label" for="hw_name">Name:</label>'+
+						'			<input type="text" class="form-control" name="hw_name" value="'+erg[0]+'">'+
+						'		</span>'+
+						'		</br>'+
+						'		<button class="btn btn-success" onclick="saveChangesInDB(\'Hardware\', this, '+erg[1]+')">'+
+						'			Ändern&nbsp;&nbsp;&nbsp;<span class=" glyphicon glyphicon-edit"></span>'+
+						'		</button>		'+	
+						'		<button class="btn btn-danger" type="button" onclick="discard(this)">'+
+						'			Verwerfen&nbsp;&nbsp;&nbsp;<span class=" glyphicon glyphicon-remove"></span>'+
+						'		</button>		'+	
+						'	</div>	'+		
+						'');
+						$('#container_for_newBoxes').append(HardwareMaske); // put it into the DOM 
+					break;
+				default:
+					//cant happen
+			
+				}
+			}
+
+		});
+	}
+
+	
+	function discard(elem){
+		$( elem).parent().hide();
+	}
+	
+	function saveChangesInDB(type_, elem, id)
+	{
+		elementList = [];
+		
+		switch(type_) {
+		case "Anwendung":
+			var newAnwName = $(elem ).prev().prev()[0].childNodes[3].value;
+			elementList.push(newAnwName);
+			break;
+		case "Artefakt":
+			var newArtName = $(elem ).prev().prev().prev().prev()[0].childNodes[3].value;
+			var newArtLizenz = $(elem ).prev().prev().prev()[0].childNodes[3].value;
+			var newArtSonstiges = $(elem ).prev().prev()[0].childNodes[3].value;
+			elementList.push(newArtName);
+			elementList.push(newArtLizenz);
+			elementList.push(newArtSonstiges);
+			break;
+		case "Deployment":
+			var newDepName = $(elem ).prev().prev().prev().prev()[0].childNodes[3].value;
+			var newDepRTE = $(elem ).prev().prev().prev()[0].childNodes[3].value;
+			var newDepPort = $(elem ).prev().prev()[0].childNodes[3].value;
+			elementList.push(newDepName);
+			elementList.push(newDepRTE);
+			elementList.push(newDepPort);
+			break;
+		case "Server":
+			var newSerName = $(elem ).prev().prev().prev().prev()[0].childNodes[3].value;
+			var newSerZone = $(elem ).prev().prev().prev()[0].childNodes[3].value;
+			var newSerOS = $(elem ).prev().prev()[0].childNodes[3].value;
+			elementList.push(newSerName);
+			elementList.push(newSerZone);
+			elementList.push(newSerOS);
+			break;
+		case "Hardware":
+			var newHWName = $(elem ).prev().prev()[0].childNodes[3].value;
+			elementList.push(newHWName);
+			break;			
+		}
+		
+		$.ajax({
+			type: "POST",
+			url: "save_changedCI_in_db.php",
+			data: { type: type_, elements: elementList, id: id},
+         success : function(text)
+         {
+             response = text;
+         }
+		}).done(function( ) {
+			alert(response)	
+			$( elem).parent().hide();			
+		});
+	}
+	
+	</script>
+
+</body>
+</html>
